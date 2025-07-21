@@ -1,0 +1,6 @@
+*.sqlite3
+.env
+media/
+staticfiles/
+*.pyc
+.DS_Store

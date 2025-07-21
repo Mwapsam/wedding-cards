@@ -1,0 +1,13 @@
+{% if events %}
+    <ul>
+        {% for event in events %}
+            <li>
+                <a href="{% url 'event_detail' event_id=event.id %}" class="highlight">
+                    {{ event.title }} at {{ event.venue }} — {{ event.guest_count }} guests
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You have no events yet.</p>
+{% endif %}

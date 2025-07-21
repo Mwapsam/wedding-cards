@@ -1,0 +1,9 @@
+{% if invitations %}
+    <ul>
+        {% for invitation in invitations %}
+            <li>Invitation for {{ invitation.event.title }} ({{ invitation.guests.count }} guests)</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No invitations yet.</p>
+{% endif %}

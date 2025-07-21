@@ -1,0 +1,123 @@
+{% extends "account/base_entrance.html" %}
+{% load i18n allauth account %}
+
+{% block head_title %}
+   {% trans "Sign In" %}
+{% endblock head_title %}
+
+{% block content %}
+    <div class="signin-header">
+        <h1 class="signin-title">{% trans "Sign In" %}</h1>
+        <p class="signin-subtitle">Welcome back! Please sign in to your account</p>
+    </div>
+
+    {% if not SOCIALACCOUNT_ONLY %}
+        <div class="signup-prompt">
+            <div>
+                {% translate "If you have not created an account yet, then please" %}
+                <a href="{{ signup_url }}">{% translate "sign up" %}</a>
+                {% translate "first." %}
+            </div>
+        </div>
+
+        {% url 'account_login' as login_url %}
+        <form class="signin-form" method="post" action="{{ login_url }}">
+            {% csrf_token %}
+            {% if form.errors %}
+                <div class="form-errors">
+                    <div class="error-card">
+                        <strong>{% trans "Please correct the errors below:" %}</strong>
+                        <ul>
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="form-field">
+                <label for="id_login">{% trans "Username or Email" %}</label>
+                <input type="text" name="login" placeholder="Enter your username or email" id="id_login" required autocomplete="username">
+            </div>
+            <div class="form-field">
+                <label for="id_password">{% trans "Password" %}</label>
+                <input type="password" name="password" placeholder="Enter your password" id="id_password" required autocomplete="current-password">
+            </div>
+
+            <div class="remember-me">
+                <input type="checkbox" name="remember" id="id_remember">
+                <label for="id_remember">{% trans "Remember me" %}</label>
+            </div>
+
+            {{ redirect_field }}
+            <div class="form-actions">
+                <input class="btn-primary" type="submit" value="{% trans "Sign In" %}" />
+            </div>
+            <div class="forgot-password">
+                <a href="{% url 'account_reset_password' %}">{% trans "Forgot your password?" %}</a>
+            </div>
+        </form>
+
+        {% if user.is_authenticated and user.mfa_recovery_codes.exists %}
+            <div class="divider">
+                <span>{% trans "or" %}</span>
+            </div>
+            <div class="mfa-login-section">
+                <a href="{% url 'mfa_login' %}" class="btn-secondary">
+                    {% trans "Login with Two-Factor Authentication" %}
+                </a>
+            </div>
+        {% endif %}
+
+        {% if user.is_authenticated and not user.passkey_set.exists %}
+            <div class="signup-prompt" style="margin-top: 2rem;">
+                <div>
+                    <strong>{% trans "Secure your account" %}</strong><br>
+                    {% trans "Add a passkey for faster and more secure login." %}
+                    <br><br>
+                    <a href="{% url 'mfa_add_passkey' %}" class="btn-primary">
+                        {% trans "Add Passkey" %}
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if mfa_available %}
+            <div class="divider">
+                <span>{% trans "or" %}</span>
+            </div>
+            <div class="passkey-login-section">
+                <form method="post" action="{% url 'mfa_login' %}?passkey=1">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-secondary">
+                        {% trans "Login with Passkey" %}
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    {% if LOGIN_BY_CODE_ENABLED %}
+        <div class="login-code-section">
+            <h2>{% trans "Alternative Sign In" %}</h2>
+            <a href="{{ request_login_code_url }}" class="btn-secondary">
+                {% trans "Passwordless" %}
+            </a>
+        </div>
+    {% endif %}
+
+    {% if SOCIALACCOUNT_ENABLED %}
+        <div class="divider">
+            <span>{% trans "or" %}</span>
+        </div>
+        <div class="social-login-section">
+            {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+        </div>
+    {% endif %}
+{% endblock content %}

@@ -1,0 +1,19 @@
+<form 
+    hx-post="{% url 'add_event' %}" 
+    hx-target="#modal-body" 
+    x-target="#event-list" 
+    hx-swap="outerHTML"
+    method="post"
+>
+    {% csrf_token %}
+    {% for field in event_form %}
+        <div class="form-field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+                <div class="error-card">{{ field.errors }}</div>
+            {% endif %}
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn-primary">Create Event</button>
+</form>

@@ -1,0 +1,90 @@
+{% extends "allauth/layouts/base.html" %}
+{% load i18n static %}
+
+{% block head_title %}
+    {% trans "Profile" %}
+{% endblock head_title %}
+
+
+{% block content %}
+<div class="container">
+    <div class="signin-header">
+        <h1 class="signin-title">{% trans "Your Profile" %}</h1>
+        <p class="signin-subtitle">{% trans "Manage your events and add guests" %}</p>
+    </div>
+
+    {% if messages %}
+        <div class="form-errors">
+            {% for message in messages %}
+                <div class="error-card {% if message.tags == 'success' %}success-card{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if events %}
+        <h2>{% trans "Your Events" %}</h2>
+        <div id="event-list">
+            {% include "partials/event_list.html" %}
+        </div>
+    {% endif %}
+
+    <div class="actions">
+        <button 
+            class="btn-primary" 
+            hx-get="{% url 'load_event_form' %}" 
+            hx-target="#modal-body" 
+            hx-swap="innerHTML" 
+            hx-on::htmx:after-request="showModal()">
+            New Event
+        </button>
+
+        {% if invitations %}
+            <button 
+                class="btn-secondary" 
+                hx-get="{% url 'load_guest_form' %}" 
+                hx-target="#modal-body"  
+                hx-swap="innerHTML" 
+                hx-on::htmx:after-request="showModal()"
+            >Add Guest</button>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">×</span>
+        <div id="modal-body">
+            <!-- HTMX will load form here -->
+        </div>
+    </div>
+</div>
+
+<script>
+
+    document.body.addEventListener('htmx:afterRequest', function(evt) {
+        showModal();
+    });
+
+    function showModal() {
+        document.getElementById("modal").style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById("modal").style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        var modal = document.getElementById("modal");
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    document.body.addEventListener('htmx:configRequest', function(evt) {
+        evt.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    });
+</script>
+{% endblock content %}

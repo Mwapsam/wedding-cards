@@ -1,0 +1,27 @@
+<form 
+    hx-post="{% url 'add_guest' %}" 
+    hx-target="#modal-body" 
+    hx-target="#event-list"
+    hx-swap="outerHTML"
+    method="post"
+>
+    {% csrf_token %}
+    <div class="form-field">
+        <label for="id_invitation">Select Invitation</label>
+        <select name="invitation" id="id_invitation" required>
+            {% for invitation in invitations %}
+                <option value="{{ invitation.id }}">{{ invitation.event.title }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    {% for field in guest_form %}
+        <div class="form-field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+                <div class="error-card">{{ field.errors }}</div>
+            {% endif %}
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn-primary">Add Guest</button>
+</form>

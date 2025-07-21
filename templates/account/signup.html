@@ -1,0 +1,67 @@
+<!-- templates/account/signup.html -->
+{% extends "account/base_entrance.html" %}
+{% load i18n allauth account %}
+
+{% block head_title %}
+    {% trans "Sign Up" %}
+{% endblock head_title %}
+
+{% block content %}
+    <div class="signin-header">
+        <h1 class="signin-title">{% trans "Create Account" %}</h1>
+        <p class="signin-subtitle">Join us today and start your journey</p>
+    </div>
+    <form class="signin-form" method="post" action="{% url 'account_signup' %}">
+        {% csrf_token %}
+        {% if form.errors %}
+            <div class="form-errors">
+                <div class="error-card">
+                    <strong>{% trans "Please correct the errors below:" %}</strong>
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+        <div class="form-field">
+            <label for="id_first_name" class="form-label">First Name</label>
+            <input type="text" id="id_first_name" name="first_name" placeholder="Enter your first name" value="{{ form.first_name.value|default:'' }}" required>
+        </div>
+        <div class="form-field">
+            <label for="id_last_name" class="form-label">Last Name</label>
+            <input type="text" id="id_last_name" name="last_name" placeholder="Enter your last name" value="{{ form.last_name.value|default:'' }}" required>
+        </div>
+        <div class="form-field">
+            <label for="id_email">{% trans "Email" %}</label>
+            <input type="email" name="email" id="id_email" required>
+        </div>
+        <div class="form-field">
+            <label for="id_phone">{% trans "Phone Number" %}</label>
+            <input type="text" id="id_phone" name="phone" placeholder="{% trans 'Enter your phone number' %}" value="{{ form.phone.value|default:'' }}" required>
+        </div>
+        <div class="form-field">
+            <label for="id_password1">{% trans "Password" %}</label>
+            <input type="password" name="password1" id="id_password1" required>
+        </div>
+        <div class="form-field">
+            <label for="id_password2">{% trans "Confirm Password" %}</label>
+            <input type="password" name="password2" id="id_password2" required>
+        </div>
+        <div class="form-actions">
+            <input class="btn-primary" type="submit" value="{% trans "Sign Up" %}" />
+        </div>
+    </form>
+    <div class="divider">
+        <span>{% trans "or" %}</span>
+    </div>
+    <div class="signin-prompt">
+        <p>{% translate "Already have an account?" %} <a href="{% url 'account_login' %}">{% translate "Sign In" %}</a></p>
+    </div>
+{% endblock content %}

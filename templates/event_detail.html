@@ -1,0 +1,47 @@
+{% extends "allauth/layouts/base.html" %}
+{% load i18n %}
+
+{% block head_title %}
+    {{ event.title }} Details
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ event.title }}</h1>
+        <p><strong>Date:</strong> {{ event.date|date:"F j, Y, g:i A" }}</p>
+        <p><strong>Venue:</strong> {{ event.venue }}</p>
+        <p><strong>Description:</strong> {{ event.description|default:"—" }}</p>
+
+        <hr>
+
+        <h2>Guests ({{ guests.count }})</h2>
+        {% if guests %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Card</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for guest in guests %}
+                        <tr>
+                            <td>{{ guest.first_name }}</td>
+                            <td>{{ guest.phone|default:"—" }}</td>
+                            <td>
+                                {% if guest.card_image %}
+                                    <img src="{{ guest.card_image.url }}" alt="Card for {{ guest.first_name }}" width="50">
+                                {% else %}
+                                    <span class="text-muted">No card yet</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No guests have been invited yet.</p>
+        {% endif %}
+    </div>
+{% endblock %}
