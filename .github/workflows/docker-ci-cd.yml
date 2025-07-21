@@ -22,16 +22,16 @@ jobs:
       - name: Configure known_hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H 3.10.207.244 >> ~/.ssh/known_hosts
+          ssh-keyscan -H 3.10.226.216 >> ~/.ssh/known_hosts
 
       - name: Validate connection
-        run: ssh ubuntu@3.10.207.244 "hostname"
+        run: ssh ubuntu@3.10.226.216 "hostname"
 
       - name: Fix permissions on server
         run: |
-          ssh ubuntu@3.10.207.244 "
-            sudo chown -R ubuntu:ubuntu /home/ubuntu/task_it/ && \
-            chmod -R u+rwX /home/ubuntu/task_it/
+          ssh ubuntu@3.10.226.216 "
+            sudo chown -R ubuntu:ubuntu /home/ubuntu/wedding-cards/ && \
+            chmod -R u+rwX /home/ubuntu/wedding-cards/
           "
 
       - name: Sync code
@@ -42,11 +42,11 @@ jobs:
             --exclude='__pycache__' \
             --exclude=staticfiles \
             --exclude='utils/logging.log' \
-            ./ ubuntu@3.10.207.244:/home/ubuntu/task_it/
+            ./ ubuntu@3.10.226.216:/home/ubuntu/wedding-cards/
 
       - name: Create .env on server
         run: |
-          ssh ubuntu@3.10.207.244 "cat <<EOF > /home/ubuntu/task_it/.env
+          ssh ubuntu@3.10.226.216 "cat <<EOF > /home/ubuntu/wedding-cards/.env
           DATABASE_ENGINE=${{ secrets.DATABASE_ENGINE }}
           DATABASE_HOST=${{ secrets.DATABASE_HOST }}
           DATABASE_NAME=${{ secrets.DATABASE_NAME }}
@@ -54,9 +54,6 @@ jobs:
           DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
           DATABASE_PORT=${{ secrets.DATABASE_PORT }}
           DEBUG=${{ secrets.DEBUG }}
-          ENABLE_METRICS=${{ secrets.ENABLE_METRICS }}
-          DJANGO_SETTINGS_MODULE=${{ secrets.DJANGO_SETTINGS_MODULE}}
-          MAPS_API_KEY=${{ secrets.MAPS_API_KEY }}
           SECRET_KEY=${{ secrets.SECRET_KEY }}
           MAILTRAP_API_TOKEN=${{secrets.MAILTRAP_API_TOKEN}}
           AWS_STORAGE_BUCKET_NAME=${{ secrets.AWS_STORAGE_BUCKET_NAME }}
@@ -71,12 +68,12 @@ jobs:
           EOF
           "
           # Secure the .env file
-          ssh ubuntu@3.10.207.244 "chmod 600 /home/ubuntu/task_it/.env"
+          ssh ubuntu@3.10.226.216 "chmod 600 /home/ubuntu/wedding-cards/.env"
 
       - name: Deploy containers
         run: |
-          ssh ubuntu@3.10.207.244 "
-            cd /home/ubuntu/task_it && \
+          ssh ubuntu@3.10.226.216 "
+            cd /home/ubuntu/wedding-cards && \
             if [ -f db.sqlite3 ]; then rm db.sqlite3; echo 'Deleted db.sqlite3'; fi; \
             docker-compose up --build -d --remove-orphans 
           "
