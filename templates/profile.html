@@ -13,16 +13,6 @@
         <p class="signin-subtitle">{% trans "Manage your events and add guests" %}</p>
     </div>
 
-    {% if messages %}
-        <div class="form-errors">
-            {% for message in messages %}
-                <div class="error-card {% if message.tags == 'success' %}success-card{% endif %}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
     {% if events %}
         <h2>{% trans "Your Events" %}</h2>
         <div id="event-list">

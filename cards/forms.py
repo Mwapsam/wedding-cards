@@ -1,10 +1,13 @@
+import re
 from allauth.account.forms import SignupForm
+from allauth.account.forms import LoginForm
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from .models import Guest, User, WeddingEvent
 from phonenumbers import parse, is_valid_number
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.contrib.auth import authenticate
 
 
 def validate_phone_number(value):
@@ -72,6 +75,26 @@ class CustomSignupForm(SignupForm):
         user.last_name = self.cleaned_data.get("last_name")
         user.save()
         return user
+
+
+class CustomLoginForm(LoginForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["login"].label = "Email or Phone"
+        self.fields["login"].help_text = "Enter your email address or phone number."
+
+    def clean_login(self):
+        login = self.cleaned_data["login"]
+        # Check if the input is an email or phone and validate accordingly
+        if "@" in login:
+            # Handle as email
+            if not User.objects.filter(email=login).exists():
+                raise forms.ValidationError("No user found with this email.")
+        else:
+            # Handle as phone
+            if not User.objects.filter(phone=login).exists():
+                raise forms.ValidationError("No user found with this phone number.")
+        return login
 
 
 class GuestForm(forms.ModelForm):

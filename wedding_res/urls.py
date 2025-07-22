@@ -13,6 +13,7 @@ admin.site.login = secure_admin_login(admin.site.login)
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
+    path("accounts/mfa/", include("allauth.mfa.urls")),
     path("accounts/profile/", TemplateView.as_view(template_name="profile.html")),
     path("i18n/", include("django.conf.urls.i18n")),
     path("", include("cards.urls")),

@@ -118,43 +118,34 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+LOGIN_REDIRECT_URL = "/"
 
 AUTHENTICATION_BACKENDS = [
+    "cards.backends.EmailOrPhoneBackend",
     "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {"APP": {"client_id": "123", "secret": "456", "key": ""}}
 }
 
-
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_LOGIN_BY_CODE_ENABLED = True
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
-ACCOUNT_LOGIN_METHODS = {
-    "email",
-}
-ACCOUNT_PASSWORD_RESET_BY_CODE_ENABLED = True
-ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = "email"
+ACCOUNT_LOGIN_METHODS = {"username"}
+# ACCOUNT_SIGNUP_FIELDS = ["email*", "phone*", "password1*", "password2*"]
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = False
+ACCOUNT_EMAIL_VERIFICATION = "optional"
+ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = False
+
 ACCOUNT_ADAPTER = "cards.allauth.AccountAdapter"
 ACCOUNT_FORMS = {
     "signup": "cards.forms.CustomSignupForm",
+    "login": "cards.forms.CustomLoginForm",
 }
 
-
-MFA_SUPPORTED_TYPES = [
-    "webauthn",
-    "totp",
-    "recovery_codes",
-]
-MFA_PASSKEY_LOGIN_ENABLED = True
-MFA_PASSKEY_SIGNUP_ENABLED = True
 
 if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
