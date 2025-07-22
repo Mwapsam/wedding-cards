@@ -7,7 +7,8 @@ SECRET_KEY = "django-insecure-xb#nn@m67bnhc%y8c5kjn(-q&536$kldfa2n@jggk=zox^ez#a
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*.dreamjobzm.com", "localhost"]
+SITE_URL = "https://cards.dreamjobzm.com"
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -36,6 +37,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "utils.middlewares.RequestLoggingMiddleware",
 ]
 
 ROOT_URLCONF = "wedding_res.urls"
@@ -205,3 +207,23 @@ else:
             "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
         },
     }
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {"format": "{levelname} {asctime} {module} {message}", "style": "{"},
+    },
+    "handlers": {
+        "file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": "utils/logging.log",
+        },
+    },
+    "root": {
+        "handlers": ["file"],
+        "level": "INFO",
+    },
+}
