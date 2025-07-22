@@ -103,15 +103,6 @@
         {% endif %}
     {% endif %}
 
-    {% if LOGIN_BY_CODE_ENABLED %}
-        <div class="login-code-section">
-            <h2>{% trans "Alternative Sign In" %}</h2>
-            <a href="{{ request_login_code_url }}" class="btn-secondary">
-                {% trans "Passwordless" %}
-            </a>
-        </div>
-    {% endif %}
-
     {% if SOCIALACCOUNT_ENABLED %}
         <div class="divider">
             <span>{% trans "or" %}</span>
