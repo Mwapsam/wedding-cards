@@ -188,7 +188,7 @@ if DEBUG is False:
     CLOUDFRONT_ID = os.environ.get("AWS_CLOUDFRONT_ID", "")
 
     AWS_DEFAULT_ACL = None
-    AWS_QUERYSTRING_AUTH = False
+    # AWS_QUERYSTRING_AUTH = False
 
     AWS_S3_OBJECT_PARAMETERS = {
         "CacheControl": "max-age=31536000, public",
