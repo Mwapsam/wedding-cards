@@ -182,7 +182,7 @@ if DEBUG is False:
     AWS_CLOUDFRONT_DOMAIN = os.environ.get("AWS_CLOUDFRONT_DOMAIN", "")
     CLOUDFRONT_ID = os.environ.get("AWS_CLOUDFRONT_ID", "")
 
-    AWS_DEFAULT_ACL = "public-read"
+    AWS_DEFAULT_ACL = None
     AWS_QUERYSTRING_AUTH = False
 
     AWS_S3_OBJECT_PARAMETERS = {
