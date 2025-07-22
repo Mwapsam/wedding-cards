@@ -31,7 +31,10 @@
                             <td>{{ guest.phone|default:"—" }}</td>
                             <td>
                                 {% if guest.card_image %}
-                                    <img src="{{ guest.card_image.url }}" alt="Card for {{ guest.first_name }}" width="50">
+                                    <a href="{% url 'invitation_card' guest.id %}">
+                                        <img src="{{ guest.card_image.url }}" alt="Card for {{ guest.first_name }}" width="50">
+                                    </a>
+                                    
                                 {% else %}
                                     <span class="text-muted">No card yet</span>
                                 {% endif %}

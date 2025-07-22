@@ -382,9 +382,9 @@
   }
 
   .modal-close {
-    position: absolute;
-    top: -57px;
-    right: 5px;
+    position: fixed;
+    top: -10px;
+    right: 10px;
     font-size: 2.5em;
     background: none;
     border: none;
@@ -408,7 +408,6 @@
     flex-wrap: wrap;
     margin-top: 1rem;
   }
-
 
   .card {
     background-color: #fff;
@@ -452,7 +451,6 @@
     border-collapse: collapse;
     margin-bottom: 1rem;
   }
-
 
   .table th,
   .table td {
@@ -503,5 +501,28 @@
     border: 1px dashed #ced4da;
     border-radius: 8px;
     color: #868e96;
+  }
+
+  .help-text {
+    font-style: italic;
+    color: #9a9ea2;
+  }
+
+  .image-card {
+    overflow-y: auto; /* vertical scroll only */
+    overflow-x: hidden; /* hide horizontal scroll */
+    height: 100vh;
+    padding-bottom: 4rem;
+    scrollbar-width: none; /* for Firefox */
+  }
+
+  /* Hide scrollbar for Chrome, Edge, and Safari */
+  .image-card::-webkit-scrollbar {
+    display: none;
+  }
+
+  .shareable-link {
+    display: flex;
+    gap: 1rem;
   }
 </style>

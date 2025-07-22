@@ -59,16 +59,17 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
+            position: relative;
         }
 
-        nav > div {
+        .nav-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             height: 70px;
         }
 
-        nav a[href="#"] {
+        .nav-logo {
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--pure-white);
@@ -78,25 +79,30 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             transition: all 0.3s ease;
+            z-index: 1001;
+            position: relative;
         }
 
-        nav a[href="#"]:hover {
+        .nav-logo:hover {
             transform: translateY(-2px);
             filter: brightness(1.2);
         }
 
-        #nav-mobile {
+        /* Desktop Navigation */
+        .nav-menu {
             display: flex;
             list-style: none;
             gap: 0.5rem;
             align-items: center;
+            margin: 0;
+            padding: 0;
         }
 
-        #nav-mobile li {
+        .nav-menu li {
             position: relative;
         }
 
-        #nav-mobile a {
+        .nav-menu a {
             display: block;
             padding: 0.75rem 1.5rem;
             color: var(--pure-white);
@@ -106,16 +112,117 @@
             font-weight: 500;
             position: relative;
             overflow: hidden;
+            white-space: nowrap;
         }
 
-        #nav-mobile a:hover {
+        .nav-menu a:hover {
             background: linear-gradient(135deg, var(--accent-purple), var(--dark-purple));
             transform: translateY(-2px);
             box-shadow: var(--shadow-large);
         }
 
-        #nav-mobile a:active {
+        .nav-menu a:active {
             transform: translateY(0);
+        }
+
+        /* Hamburger Menu Button */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 1001;
+            position: relative;
+            background: none;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--pure-white);
+            margin: 3px 0;
+            transition: all 0.3s ease;
+            border-radius: 3px;
+        }
+
+        .nav-toggle.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+            background: var(--accent-purple);
+        }
+
+        .nav-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .nav-toggle.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+            background: var(--accent-purple);
+        }
+
+        /* Mobile Menu Overlay */
+        .nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-overlay.active {
+            opacity: 1;
+        }
+
+        /* Mobile Menu */
+        .nav-menu-mobile {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100vh;
+            background: rgba(26, 26, 26, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 5rem 0 2rem;
+            transition: right 0.3s ease;
+            z-index: 1000;
+            border-left: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-menu-mobile.active {
+            right: 0;
+        }
+
+        .nav-menu-mobile ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-menu-mobile li {
+            border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+        }
+
+        .nav-menu-mobile a {
+            display: block;
+            padding: 1.25rem 2rem;
+            color: var(--pure-white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-menu-mobile a:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-left-color: var(--accent-purple);
+            padding-left: 2.5rem;
         }
 
         /* Main Content */
@@ -187,6 +294,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            height: 100vh;
         }
 
         .content-card::before {
@@ -213,25 +321,27 @@
         form {
             display: flex;
             flex-direction: column;
+        }
 
-            p {
-                display: flex;
-                flex-direction: column;
+        form p {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1.5rem;
+        }
 
-                label {
-                    margin-bottom: 0.5rem;
-                }
-            }
+        form p label {
+            margin-bottom: 0.5rem;
+        }
 
-            button {
-                margin-bottom: 1rem;
-            }
+        form button {
+            margin-bottom: 1rem;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            margin-bottom: 1.5rem;
         }
 
         label {
@@ -376,21 +486,24 @@
                 padding: 0 1rem;
             }
 
-            nav > div {
+            .nav-container {
                 height: 60px;
             }
 
-            nav a[href="#"] {
-                font-size: 1.2rem;
+            .nav-logo {
+                font-size: 1.3rem;
             }
 
-            #nav-mobile {
-                gap: 0.25rem;
+            .nav-menu {
+                display: none;
             }
 
-            #nav-mobile a {
-                padding: 0.5rem 1rem;
-                font-size: 0.9rem;
+            .nav-toggle {
+                display: flex;
+            }
+
+            .nav-overlay {
+                display: block;
             }
 
             main > div {
@@ -400,6 +513,7 @@
             .content-card {
                 padding: 2rem 1.5rem;
                 border-radius: 16px;
+                min-height: 300px;
             }
 
             h1 {
@@ -409,21 +523,55 @@
             h2 {
                 font-size: 1.5rem;
             }
+
+            /* Adjust mobile menu width for smaller screens */
+            .nav-menu-mobile {
+                width: 100%;
+                right: -100%;
+            }
+
+            .nav-menu-mobile.active {
+                right: 0;
+            }
         }
 
         @media (max-width: 480px) {
-            #nav-mobile {
-                flex-wrap: wrap;
-                gap: 0.5rem;
+            nav {
+                padding: 0 0.75rem;
             }
 
-            #nav-mobile a {
-                padding: 0.5rem 0.75rem;
-                font-size: 0.8rem;
+            .nav-logo {
+                font-size: 1.2rem;
             }
 
             .content-card {
                 padding: 1.5rem 1rem;
+                margin: 0.5rem;
+            }
+
+            .nav-menu-mobile {
+                width: 100%;
+            }
+
+            .nav-menu-mobile a {
+                padding: 1rem 1.5rem;
+                font-size: 0.95rem;
+            }
+
+            .nav-menu-mobile a:hover {
+                padding-left: 2rem;
+            }
+        }
+
+        /* Large screens - better spacing */
+        @media (min-width: 1200px) {
+            .nav-menu {
+                gap: 1rem;
+            }
+
+            .nav-menu a {
+                padding: 0.875rem 2rem;
+                font-size: 1.05rem;
             }
         }
 
@@ -443,6 +591,11 @@
         .hidden {
             display: none;
         }
+
+        /* Prevent body scroll when menu is open */
+        body.nav-open {
+            overflow: hidden;
+        }
     </style>
 
     {% block extra_head %}
@@ -453,9 +606,11 @@
 <body>
     <header>
         <nav>
-            <div>
-                <a href="#" >AllAuth</a>
-                <ul id="nav-mobile">
+            <div class="nav-container">
+                <a href="#" class="nav-logo">AllAuth</a>
+                
+                <!-- Desktop Navigation -->
+                <ul class="nav-menu" id="nav-desktop">
                 {% if user.is_authenticated %}
                     {% url 'account_email' as email_url %}
                     {% if email_url %}
@@ -502,8 +657,63 @@
                     {% endif %}
                 {% endif %}
                 </ul>
+
+                <!-- Mobile Hamburger Button -->
+                <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
         </nav>
+
+        <!-- Mobile Menu Overlay -->
+        <div class="nav-overlay" id="nav-overlay"></div>
+
+        <!-- Mobile Navigation Menu -->
+        <div class="nav-menu-mobile" id="nav-mobile">
+            <ul>
+            {% if user.is_authenticated %}
+                {% url 'account_email' as email_url %}
+                {% if email_url %}
+                    <li>
+                        <a href="{{ email_url }}">{% trans "Change Email" %}</a>
+                    </li>
+                {% endif %}
+                {% url 'account_change_password' as change_password_url %}
+                {% if change_password_url %}
+                    <li>
+                        <a href="{{ change_password_url }}">{% trans "Change Password" %}</a>
+                    </li>
+                {% endif %}
+                {% url 'mfa_index' as mfa_url %}
+                {% if mfa_url %}
+                    <li>
+                        <a href="{{ mfa_url }}">{% trans "Two-Factor Authentication" %}</a>
+                    </li>
+                {% endif %}
+                {% url 'account_logout' as logout_url %}
+                {% if logout_url %}
+                    <li>
+                        <a href="{{ logout_url }}">{% trans "Sign Out" %}</a>
+                    </li>
+                {% endif %}
+            {% else %}
+                {% url 'account_login' as login_url %}
+                {% if login_url %}
+                    <li>
+                        <a href="{{ login_url }}">{% trans "Sign In" %}</a>
+                    </li>
+                {% endif %}
+                {% url 'account_signup' as signup_url %}
+                {% if signup_url %}
+                    <li>
+                        <a href="{{ signup_url }}">{% trans "Sign Up" %}</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+            </ul>
+        </div>
     </header>
     
     <main>
@@ -533,6 +743,52 @@
         {% endblock body %}
         </div>
     </main>
+
+    <script>
+        // Mobile Navigation Toggle
+        const navToggle = document.getElementById('nav-toggle');
+        const navMobile = document.getElementById('nav-mobile');
+        const navOverlay = document.getElementById('nav-overlay');
+        const body = document.body;
+
+        function toggleMobileNav() {
+            navToggle.classList.toggle('active');
+            navMobile.classList.toggle('active');
+            navOverlay.classList.toggle('active');
+            body.classList.toggle('nav-open');
+        }
+
+        function closeMobileNav() {
+            navToggle.classList.remove('active');
+            navMobile.classList.remove('active');
+            navOverlay.classList.remove('active');
+            body.classList.remove('nav-open');
+        }
+
+        // Event listeners
+        navToggle.addEventListener('click', toggleMobileNav);
+        navOverlay.addEventListener('click', closeMobileNav);
+
+        // Close mobile menu when clicking a link
+        const mobileLinks = navMobile.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', closeMobileNav);
+        });
+
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && navMobile.classList.contains('active')) {
+                closeMobileNav();
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768 && navMobile.classList.contains('active')) {
+                closeMobileNav();
+            }
+        });
+    </script>
     
     {% block extra_body %}
     {% endblock extra_body %}

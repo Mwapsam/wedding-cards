@@ -6,7 +6,7 @@ import os
 import math
 
 
-def generate_wedding_card(event, invitation=None):
+def generate_wedding_card(event, invitation=None, qr_image=None):
     # Portrait card dimensions
     card_size = (600, 900)  # width x height (portrait)
 
@@ -86,6 +86,7 @@ def generate_wedding_card(event, invitation=None):
     subtitle_font = load_font("Poppins-Light.ttf", 16)
     body_font = load_font("Poppins-Regular.ttf", 14)
     accent_font = load_font("Poppins-Medium.ttf", 12)
+    small_font = load_font("Poppins-Regular.ttf", 10)
 
     # Decorative flourishes function
     def draw_flourish(x, y, size=20):
@@ -124,14 +125,26 @@ def generate_wedding_card(event, invitation=None):
     x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
     draw.text((x_pos, 180), event_title, fill=primary_text_color, font=title_font)
 
-    # Decorative ellipses around title
-    title_y = 210
+    # Couple's names (if available)
+    if hasattr(event, 'couple') and event.couple:
+        couple_text = event.couple
+        bbox = draw.textbbox((0, 0), couple_text, font=subtitle_font)
+        x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+        draw.text((x_pos, 230), couple_text, fill=accent_color, font=subtitle_font)
+        
+        # Adjust decorative elements position to accommodate couple names
+        decorative_y = 260
+    else:
+        # Original position when no couple names
+        decorative_y = 210
+
+    # Decorative ellipses around title/couple area
     draw.ellipse(
-        [card_size[0] // 2 - 90, title_y, card_size[0] // 2 - 85, title_y + 5],
+        [card_size[0] // 2 - 90, decorative_y, card_size[0] // 2 - 85, decorative_y + 5],
         fill=accent_color,
     )
     draw.ellipse(
-        [card_size[0] // 2 + 85, title_y, card_size[0] // 2 + 90, title_y + 5],
+        [card_size[0] // 2 + 85, decorative_y, card_size[0] // 2 + 90, decorative_y + 5],
         fill=accent_color,
     )
 
@@ -159,8 +172,31 @@ def generate_wedding_card(event, invitation=None):
     x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
     draw.text((x_pos, 380), venue_name, fill=primary_text_color, font=body_font)
 
-    # Bottom decorations
-    bottom_y = 550
+    # Bible scripture
+    scripture_text = '"He who finds a wife finds what is good'
+    scripture_reference = 'and receives favor from the LORD."'
+    scripture_verse = "Proverbs 18:22"
+    
+    # Scripture text with line wrapping
+    bbox = draw.textbbox((0, 0), scripture_text, font=accent_font)
+    x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+    draw.text((x_pos, 420), scripture_text, fill=secondary_text_color, font=accent_font)
+    
+    bbox = draw.textbbox((0, 0), scripture_reference, font=accent_font)
+    x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+    draw.text((x_pos, 435), scripture_reference, fill=secondary_text_color, font=accent_font)
+    
+    # Scripture reference in italics style
+    bbox = draw.textbbox((0, 0), scripture_verse, font=small_font)
+    x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+    draw.text((x_pos, 460), scripture_verse, fill=accent_color, font=small_font)
+
+    # Adjust bottom decorations position based on QR code presence
+    if qr_image:
+        bottom_y = 490  # Move decorations lower to accommodate scripture
+    else:
+        bottom_y = 490  # Same position for consistency
+
     separator_length = 200
     separator_x = (card_size[0] - separator_length) // 2
     draw.line(
@@ -180,13 +216,16 @@ def generate_wedding_card(event, invitation=None):
         ]
         draw.polygon(diamond_points, fill=accent_color)
 
-    # RSVP info if available
+    # RSVP info if available (adjust position based on QR code)
     if hasattr(event, "rsvp_info") and event.rsvp_info:
+        rsvp_y_offset = 40 if not qr_image else 30
+        details_y_offset = 65 if not qr_image else 50
+        
         rsvp_text = "RSVP"
         bbox = draw.textbbox((0, 0), rsvp_text, font=accent_font)
         x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
         draw.text(
-            (x_pos, bottom_y + 40),
+            (x_pos, bottom_y + rsvp_y_offset),
             rsvp_text,
             fill=secondary_text_color,
             font=accent_font,
@@ -196,7 +235,7 @@ def generate_wedding_card(event, invitation=None):
         bbox = draw.textbbox((0, 0), rsvp_details, font=body_font)
         x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
         draw.text(
-            (x_pos, bottom_y + 65),
+            (x_pos, bottom_y + details_y_offset),
             rsvp_details,
             fill=secondary_text_color,
             font=body_font,
@@ -266,9 +305,57 @@ def generate_wedding_card(event, invitation=None):
             width=1,
         )
 
+    # QR Code placement - centered at bottom with better visibility
+    if qr_image:
+        # Larger QR code for better scanning
+        qr_size = 160  # Increased from 120 to 160
+        
+        # Center the QR code horizontally and place it near the bottom
+        qr_x = (card_size[0] - qr_size) // 2
+        qr_y = card_size[1] - qr_size - 80  # 80px from bottom
+        
+        # Create a white background with subtle border for the QR code
+        padding = 12
+        bg_x = qr_x - padding
+        bg_y = qr_y - padding
+        bg_size = qr_size + (padding * 2)
+        
+        # Draw white background with rounded corners effect
+        draw.rectangle(
+            [bg_x, bg_y, bg_x + bg_size, bg_y + bg_size],
+            fill=(255, 255, 255),
+            outline=border_color,
+            width=2
+        )
+        
+        # Add subtle shadow effect
+        shadow_offset = 3
+        draw.rectangle(
+            [bg_x + shadow_offset, bg_y + shadow_offset, 
+             bg_x + bg_size + shadow_offset, bg_y + bg_size + shadow_offset],
+            fill=(0, 0, 0, 20),  # Semi-transparent black
+            outline=None
+        )
+        
+        # Resize and paste the QR code
+        qr_resized = qr_image.resize((qr_size, qr_size), Image.Resampling.LANCZOS)
+        image.paste(qr_resized, (qr_x, qr_y))
+        
+        # Add "Scan for Details" text below QR code
+        scan_text = "Scan for Verification"
+        bbox = draw.textbbox((0, 0), scan_text, font=small_font)
+        text_x = (card_size[0] - (bbox[2] - bbox[0])) // 2
+        text_y = qr_y + qr_size + 20
+        draw.text(
+            (text_x, text_y),
+            scan_text,
+            fill=secondary_text_color,
+            font=small_font,
+        )
+
     # Save image to BytesIO buffer
     buffer = BytesIO()
-    image.save(buffer, format="PNG", optimize=True)
+    image.save(buffer, format="PNG", optimize=True, quality=95)
     buffer.seek(0)
 
     # Safe file name

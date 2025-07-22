@@ -106,11 +106,10 @@ class GuestForm(forms.ModelForm):
             )
 
 
-
 class WeddingEventForm(forms.ModelForm):
     class Meta:
         model = WeddingEvent
-        fields = ["title", "date", "venue", "description"]
+        fields = ["title", "date", "venue", "description", "couple"]
         widgets = {
             "title": forms.TextInput(attrs={"placeholder": "Enter event title"}),
             "date": forms.DateTimeInput(
@@ -123,6 +122,13 @@ class WeddingEventForm(forms.ModelForm):
             "description": forms.Textarea(
                 attrs={"placeholder": "Enter event description", "rows": 4}
             ),
+        }
+        help_texts = {
+            "title": _("The name of your wedding event."),
+            "date": _("Choose a future date and time for the event."),
+            "venue": _("Location where the event will be held."),
+            "description": _("Add any important details about the event."),
+            "couple": _("Select the couple associated with this event."),
         }
 
     def clean_date(self):

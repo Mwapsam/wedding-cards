@@ -1,0 +1,52 @@
+{% extends "allauth/layouts/base.html" %}
+{% load i18n %}
+
+{% block head_title %}
+    {{ invitation.event.title }} Details
+{% endblock %}
+
+{% block content %}
+<div class="image-card">
+    {% if invitation.card_image %}
+        <img src="{{ invitation.card_image.url }}" alt="Invitation Card" style="max-width: 100%; height: auto;">
+    {% else %}
+        <p>No invitation card image available.</p>
+    {% endif %}
+
+    <a href="{{ invitation.card_image.url }}" download class="btn btn-primary mt-4">
+        {{ _("Download Invitation Card") }}
+    </a>
+
+    <!-- Share Link Section -->
+    <div class="mt-2 flex">
+        <label for="invitation-link">{{ _("Shareable Link") }}</label>
+        <div class="shareable-link">
+            <input type="text" id="invitation-link" class="form-control" readonly value="{{ request.build_absolute_uri }}">
+            <button 
+                class="btn btn-secondary" 
+                onclick="copyToClipboard()"
+            >
+                {{ _("Copy Link") }}
+            </button>
+        </div>
+        <div id="copy-feedback" class="text-success mt-2" style="display: none;">
+            {{ _("Link copied!") }}
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToClipboard() {
+    const input = document.getElementById("invitation-link");
+    input.select();
+    input.setSelectionRange(0, 99999); // For mobile
+    document.execCommand("copy");
+
+    // Show feedback
+    const feedback = document.getElementById("copy-feedback");
+    feedback.style.display = "block";
+    setTimeout(() => feedback.style.display = "none", 2000);
+}
+</script>
+
+{% endblock content %}

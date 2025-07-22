@@ -4,6 +4,7 @@
     hx-target="#event-list"
     hx-swap="outerHTML"
     method="post"
+    hx-on::after-request="if (event.detail.successful) this.reset()"
 >
     {% csrf_token %}
     <div class="form-field">

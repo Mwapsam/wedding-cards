@@ -148,27 +148,30 @@ def add_guest(request):
 
     invitation_id = request.POST.get("invitation")
     invitation = get_object_or_404(Invitation, id=invitation_id, event__planner=planner)
+
     form = GuestForm(request.POST, invitation=invitation)
 
     if form.is_valid():
         guest = form.save(commit=False)
         guest.invitation = invitation
-        card_file = generate_wedding_card(invitation.event, invitation)
-
-        guest.card_image.save(card_file.name, card_file, save=False)
-        guest.save()
+        guest.save()  # Save the guest!
 
         html = render_to_string(
             "partials/invitation_list.html",
             {"invitations": Invitation.objects.filter(event__planner=planner)},
             request=request,
         )
-
         return HttpResponse(html)
 
     else:
-        errors = form.errors.as_ul()
-        return HttpResponse(f'<div class="error-card">{errors}</div>', status=400)
+        # Render the guest form again with error messages
+        invitations = Invitation.objects.filter(event__planner=planner)
+        html = render_to_string(
+            "partials/guest_form.html",
+            {"guest_form": form, "invitations": invitations},
+            request=request,
+        )
+        return HttpResponse(html, status=400)
 
 
 @login_required
@@ -197,10 +200,9 @@ def load_guest_form(request):
     return HttpResponse(html)
 
 
+@login_required
 def event_detail(request, event_id):
     event = get_object_or_404(WeddingEvent, id=event_id, planner__user=request.user)
-
-    # Get all guests for this event
     guests = Guest.objects.filter(invitation__event=event)
 
     return render(
@@ -223,3 +225,11 @@ def verify_invitation(request, token):
     )
 
     return HttpResponse(f"Invitation {invitation.id} verified successfully!")
+
+
+def invitation_card_view(request, pk):
+    invitation = get_object_or_404(Guest, pk=pk)
+    
+    return render(
+        request, "invitations/invitation_card.html", {"invitation": invitation}
+    )

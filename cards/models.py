@@ -160,6 +160,7 @@ class Guest(models.Model):
     check_in_time = models.DateTimeField(null=True, blank=True)
 
     card_image = models.ImageField(upload_to="guest_cards/", blank=True, null=True)
+    qr_code = models.ImageField(upload_to="qr_codes/", blank=True)
 
     class Meta:
         unique_together = ["invitation", "email"]
