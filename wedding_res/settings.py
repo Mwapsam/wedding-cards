@@ -26,10 +26,11 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.facebook",
     "allauth.usersessions",
-    "storages",
     "compressor",
     "cards",
 ]
+
+INSTALLED_APPS += ["storages"]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -170,9 +171,6 @@ else:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = False
     SECURE_HSTS_PRELOAD = False
     DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600
-
-STATICFILES_STORAGE = "wedding_res.storage_backends.StaticToS3Storage"
-DEFAULT_FILE_STORAGE = "wedding_res.storage_backends.mediaRootS3Boto3Storage"
 
 if DEBUG is False:
     STATICFILES_FINDERS = [
