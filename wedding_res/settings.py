@@ -219,6 +219,11 @@ else:
     }
 
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://cards.dreamjobzm.com",
+    "http://localhost:8000",  # For local development
+]
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
