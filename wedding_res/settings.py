@@ -167,6 +167,7 @@ else:
     SECURE_HSTS_PRELOAD = False
     DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600
 
+
 if DEBUG is False:
     STATICFILES_FINDERS = [
         "django.contrib.staticfiles.finders.FileSystemFinder",
