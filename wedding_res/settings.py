@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.facebook",
     "allauth.usersessions",
     "storages",
+    "compressor",
     "cards",
 ]
 
