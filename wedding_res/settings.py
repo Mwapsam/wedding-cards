@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.facebook",
     "allauth.usersessions",
-    "cards",
+    "storages" "cards",
 ]
 
 MIDDLEWARE = [
