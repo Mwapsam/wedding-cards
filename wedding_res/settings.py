@@ -3,9 +3,11 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "django-insecure-xb#nn@m67bnhc%y8c5kjn(-q&536$kldfa2n@jggk=zox^ez#a"
+SECRET_KEY = os.getenv(
+    "SECRET_KEY", "django-insecure-xb#nn@m67bnhc%y8c5kjn(-q&536$kldfa2n@jggk=zox^ez#a"
+)
 
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "True").lower() == "false"
 
 ALLOWED_HOSTS = ["cards.dreamjobzm.com", "localhost", "3.10.226.216"]
 SITE_URL = "https://cards.dreamjobzm.com"
