@@ -7,7 +7,7 @@ SECRET_KEY = "django-insecure-xb#nn@m67bnhc%y8c5kjn(-q&536$kldfa2n@jggk=zox^ez#a
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["*.dreamjobzm.com", "localhost", "3.10.226.216"]
+ALLOWED_HOSTS = ["cards.dreamjobzm.com", "localhost", "3.10.226.216"]
 SITE_URL = "https://cards.dreamjobzm.com"
 
 INSTALLED_APPS = [
