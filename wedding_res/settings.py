@@ -168,6 +168,8 @@ else:
     SECURE_HSTS_PRELOAD = False
     DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600
 
+STATICFILES_STORAGE = "wedding_res.storage_backends.StaticToS3Storage"
+DEFAULT_FILE_STORAGE = "wedding_res.storage_backends.mediaRootS3Boto3Storage"
 
 if DEBUG is False:
     STATICFILES_FINDERS = [
@@ -175,9 +177,6 @@ if DEBUG is False:
         "django.contrib.staticfiles.finders.AppDirectoriesFinder",
         "compressor.finders.CompressorFinder",
     ]
-
-    DEFAULT_FILE_STORAGE = "wedding_res.storage_backends.mediaRootS3Boto3Storage"
-    STATICFILES_STORAGE = "wedding_res.storage_backends.StaticToS3Storage"
 
     AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "")
     AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "")
