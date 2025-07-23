@@ -8,9 +8,9 @@ SECRET_KEY = os.getenv(
 )
 
 DEBUG = os.environ.get("DEBUG", "True").lower() == "false"
+# DEBUG=True
 
-ALLOWED_HOSTS = ["cards.dreamjobzm.com", "localhost", "3.10.226.216"]
-SITE_URL = "https://cards.dreamjobzm.com"
+ALLOWED_HOSTS = ["cards.dreamjobzm.com", "localhost", "3.10.226.216", "127.0.0.1"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -26,7 +26,6 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.facebook",
     "allauth.usersessions",
-    "compressor",
     "cards",
 ]
 
@@ -173,6 +172,8 @@ else:
     DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600
 
 if DEBUG is False:
+    SITE_URL = "https://cards.dreamjobzm.com"
+
     STATICFILES_FINDERS = [
         "django.contrib.staticfiles.finders.FileSystemFinder",
         "django.contrib.staticfiles.finders.AppDirectoriesFinder",
@@ -187,8 +188,8 @@ if DEBUG is False:
     AWS_CLOUDFRONT_DOMAIN = os.environ.get("AWS_CLOUDFRONT_DOMAIN", "")
     CLOUDFRONT_ID = os.environ.get("AWS_CLOUDFRONT_ID", "")
 
-    AWS_DEFAULT_ACL = None
-    # AWS_QUERYSTRING_AUTH = False
+    AWS_DEFAULT_ACL = "public-read"
+    AWS_QUERYSTRING_AUTH = False
 
     AWS_S3_OBJECT_PARAMETERS = {
         "CacheControl": "max-age=31536000, public",
@@ -223,27 +224,53 @@ else:
         },
     }
 
+COMPRESS_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 CSRF_TRUSTED_ORIGINS = [
     "https://cards.dreamjobzm.com",
     "http://localhost:8000",  # For local development
 ]
 
+LOG_DIR = os.path.join(BASE_DIR, 'utils')
+os.makedirs(LOG_DIR, exist_ok=True)
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "verbose": {"format": "{levelname} {asctime} {module} {message}", "style": "{"},
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
     },
     "handlers": {
         "file": {
             "level": "INFO",
-            "class": "logging.FileHandler",
-            "filename": "utils/logging.log",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(LOG_DIR, "django.log"),
+            "maxBytes": 1024*1024*5,  # 5 MB
+            "backupCount": 5,
+            "formatter": "verbose",
+        },
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
         },
     },
     "root": {
-        "handlers": ["file"],
+        "handlers": ["file", "console"],
         "level": "INFO",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
     },
 }

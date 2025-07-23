@@ -81,7 +81,7 @@ def profile(request):
         planner = WeddingPlanner.objects.get(user=request.user)
     except WeddingPlanner.DoesNotExist:
         messages.error(request, "You are not registered as a wedding planner.")
-        return redirect("home")
+        return redirect("profile")
 
     events = WeddingEvent.objects.filter(planner=planner).annotate(
         guest_count=Count("invitations__guests", distinct=True)
