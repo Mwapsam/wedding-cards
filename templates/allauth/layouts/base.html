@@ -1,7 +1,6 @@
 {% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,14 +10,12 @@
         {% endblock head_title %}
     </title>
     <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
-    
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         :root {
             --primary-black: #0a0a0a;
             --secondary-black: #1a1a1a;
@@ -37,7 +34,6 @@
             --gradient-primary: linear-gradient(135deg, var(--accent-purple) 0%, var(--dark-purple) 100%);
             --gradient-light: linear-gradient(135deg, var(--light-purple) 0%, var(--accent-purple) 100%);
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
@@ -46,7 +42,6 @@
             line-height: 1.6;
             overflow: hidden;
         }
-
         /* Header Styles */
         header {
             background: rgba(26, 26, 26, 0.95);
@@ -57,21 +52,18 @@
             z-index: 1000;
             transition: all 0.3s ease;
         }
-
         nav {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
             position: relative;
         }
-
         .nav-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             height: 70px;
         }
-
         .nav-logo {
             font-size: 1.5rem;
             font-weight: 700;
@@ -85,12 +77,10 @@
             z-index: 1001;
             position: relative;
         }
-
         .nav-logo:hover {
             transform: translateY(-2px);
             filter: brightness(1.2);
         }
-
         /* Desktop Navigation */
         .nav-menu {
             display: flex;
@@ -100,11 +90,9 @@
             margin: 0;
             padding: 0;
         }
-
         .nav-menu li {
             position: relative;
         }
-
         .nav-menu a {
             display: block;
             padding: 0.75rem 1.5rem;
@@ -117,17 +105,14 @@
             overflow: hidden;
             white-space: nowrap;
         }
-
         .nav-menu a:hover {
             background: linear-gradient(135deg, var(--accent-purple), var(--dark-purple));
             transform: translateY(-2px);
             box-shadow: var(--shadow-large);
         }
-
         .nav-menu a:active {
             transform: translateY(0);
         }
-
         /* Hamburger Menu Button */
         .nav-toggle {
             display: none;
@@ -140,7 +125,6 @@
             border: none;
             transition: all 0.3s ease;
         }
-
         .nav-toggle span {
             width: 25px;
             height: 3px;
@@ -149,21 +133,17 @@
             transition: all 0.3s ease;
             border-radius: 3px;
         }
-
         .nav-toggle.active span:nth-child(1) {
             transform: rotate(-45deg) translate(-5px, 6px);
             background: var(--accent-purple);
         }
-
         .nav-toggle.active span:nth-child(2) {
             opacity: 0;
         }
-
         .nav-toggle.active span:nth-child(3) {
             transform: rotate(45deg) translate(-5px, -6px);
             background: var(--accent-purple);
         }
-
         /* Mobile Menu Overlay */
         .nav-overlay {
             display: none;
@@ -177,11 +157,10 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-
         .nav-overlay.active {
+            display: block;
             opacity: 1;
         }
-
         /* Mobile Menu */
         .nav-menu-mobile {
             position: fixed;
@@ -197,21 +176,17 @@
             border-left: 1px solid rgba(139, 92, 246, 0.2);
             box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
         }
-
         .nav-menu-mobile.active {
             right: 0;
         }
-
         .nav-menu-mobile ul {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-
         .nav-menu-mobile li {
             border-bottom: 1px solid rgba(139, 92, 246, 0.1);
         }
-
         .nav-menu-mobile a {
             display: block;
             padding: 1.25rem 2rem;
@@ -221,13 +196,11 @@
             transition: all 0.3s ease;
             border-left: 4px solid transparent;
         }
-
         .nav-menu-mobile a:hover {
             background: rgba(139, 92, 246, 0.1);
             border-left-color: var(--accent-purple);
             padding-left: 2.5rem;
         }
-
         /* Main Content */
         main {
             flex: 1;
@@ -235,7 +208,6 @@
             flex-direction: column;
             min-height: calc(100vh - 70px);
         }
-
         main > div {
             flex: 1;
             display: flex;
@@ -243,14 +215,12 @@
             justify-content: center;
             padding: 2rem;
         }
-
         /* Messages */
         .messages-container {
             max-width: 600px;
             margin: 0 auto 2rem;
             width: 100%;
         }
-
         .messages-card {
             background: rgba(139, 92, 246, 0.1);
             border: 1px solid var(--accent-purple);
@@ -259,34 +229,28 @@
             backdrop-filter: blur(10px);
             animation: slideIn 0.5s ease-out;
         }
-
         .messages-card span {
             font-weight: 600;
             color: var(--light-purple);
             display: block;
             margin-bottom: 1rem;
         }
-
         .messages-card ul {
             list-style: none;
         }
-
         .messages-card li {
             padding: 0.5rem 0;
             border-bottom: 1px solid rgba(139, 92, 246, 0.2);
         }
-
         .messages-card li:last-child {
             border-bottom: none;
         }
-
         /* Content Container */
         .content-wrapper {
             max-width: 500px;
             margin: 0 auto;
             width: 100%;
         }
-
         .content-card {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
@@ -299,7 +263,6 @@
             overflow: scroll;
             height: 100vh;
         }
-
         .content-card::before {
             content: '';
             position: absolute;
@@ -309,44 +272,36 @@
             height: 2px;
             background: linear-gradient(90deg, var(--accent-purple), var(--light-purple));
         }
-
         .content-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.25);
         }
-
         .content-inner {
             position: relative;
             z-index: 1;
         }
-
         /* Form Styling */
         form {
             display: flex;
             flex-direction: column;
         }
-
         form p {
             display: flex;
             flex-direction: column;
             margin-bottom: 1.5rem;
         }
-
         form p label {
             margin-bottom: 0.5rem;
         }
-
         form button {
             margin-bottom: 1rem;
         }
-
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
             margin-bottom: 1.5rem;
         }
-
         label {
             font-weight: 600;
             color: var(--light-purple);
@@ -354,7 +309,6 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
         input[type="text"],
         input[type="email"],
         input[type="password"],
@@ -368,7 +322,6 @@
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
         }
-
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="password"]:focus,
@@ -378,12 +331,10 @@
             box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
             transform: translateY(-2px);
         }
-
         input::placeholder,
         textarea::placeholder {
             color: rgba(255, 255, 255, 0.5);
         }
-
         /* Buttons */
         button,
         input[type="submit"],
@@ -403,7 +354,6 @@
             position: relative;
             overflow: hidden;
         }
-
         button:hover,
         input[type="submit"]:hover,
         .btn:hover {
@@ -411,19 +361,16 @@
             box-shadow: 0 15px 35px rgba(139, 92, 246, 0.4);
             background: linear-gradient(135deg, var(--light-purple), var(--accent-purple));
         }
-
         button:active,
         input[type="submit"]:active,
         .btn:active {
             transform: translateY(-1px);
         }
-
         /* Typography */
         h1, h2, h3, h4, h5, h6 {
             margin-bottom: 1rem;
             font-weight: 700;
         }
-
         h1 {
             font-size: 2.5rem;
             background: linear-gradient(135deg, var(--pure-white), var(--light-purple));
@@ -434,30 +381,25 @@
             margin-bottom: 2rem;
             line-height: 1.1;
         }
-
         h2 {
             font-size: 2rem;
             color: var(--light-purple);
             text-align: center;
             margin-bottom: 1.5rem;
         }
-
         p {
             margin-bottom: 1rem;
             color: rgba(255, 255, 255, 0.8);
         }
-
         a {
             color: var(--light-purple);
             text-decoration: none;
             transition: all 0.3s ease;
         }
-
         a:hover {
             color: var(--accent-purple);
             text-decoration: underline;
         }
-
         /* Animations */
         @keyframes slideIn {
             from {
@@ -469,7 +411,6 @@
                 transform: translateY(0);
             }
         }
-
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -478,140 +419,107 @@
                 opacity: 1;
             }
         }
-
         .content-card {
             animation: fadeIn 0.6s ease-out;
         }
-
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
             nav {
                 padding: 0 1rem;
             }
-
             .nav-container {
                 height: 60px;
             }
-
             .nav-logo {
                 font-size: 1.3rem;
             }
-
             .nav-menu {
                 display: none;
             }
-
             .nav-toggle {
                 display: flex;
             }
-
-            .nav-overlay {
-                display: block;
-            }
-
+            /* Removed incorrect display: block on .nav-overlay */
             main > div {
                 padding: 1rem;
             }
-
             .content-card {
                 padding: 2rem 1.5rem;
                 border-radius: 16px;
                 min-height: 300px;
             }
-
             h1 {
                 font-size: 2rem;
             }
-
             h2 {
                 font-size: 1.5rem;
             }
-
-            /* Adjust mobile menu width for smaller screens */
             .nav-menu-mobile {
                 width: 100%;
                 right: -100%;
             }
-
             .nav-menu-mobile.active {
                 right: 0;
             }
         }
-
         @media (max-width: 480px) {
             nav {
                 padding: 0 0.75rem;
             }
-
             .nav-logo {
                 font-size: 1.2rem;
             }
-
             .content-card {
                 padding: 1.5rem 1rem;
                 margin: 0.5rem;
             }
-
             .nav-menu-mobile {
                 width: 100%;
             }
-
             .nav-menu-mobile a {
                 padding: 1rem 1.5rem;
                 font-size: 0.95rem;
             }
-
             .nav-menu-mobile a:hover {
                 padding-left: 2rem;
             }
         }
-
-        /* Large screens - better spacing */
         @media (min-width: 1200px) {
             .nav-menu {
                 gap: 1rem;
             }
-
             .nav-menu a {
                 padding: 0.875rem 2rem;
                 font-size: 1.05rem;
             }
         }
-
         /* Utility Classes */
         .text-center {
             text-align: center;
         }
-
         .mt-4 {
             margin-top: 2rem;
         }
-
         .mb-4 {
             margin-bottom: 2rem;
         }
-
         .hidden {
             display: none;
         }
-
         /* Prevent body scroll when menu is open */
         body.nav-open {
             overflow: hidden;
         }
     </style>
-
     {% block extra_head %}
     {% include "account/form_styles.html" %}
     {% endblock extra_head %}
 </head>
-
 <body>
     <header>
         <nav>
             <div class="nav-container">
                 <a href="#" class="nav-logo">AllAuth</a>
-                
                 <!-- Desktop Navigation -->
                 <ul class="nav-menu" id="nav-desktop">
                 {% if user.is_authenticated %}
@@ -660,19 +568,16 @@
                     {% endif %}
                 {% endif %}
                 </ul>
-
                 <!-- Mobile Hamburger Button -->
-                <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+                <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
             </div>
         </nav>
-
         <!-- Mobile Menu Overlay -->
         <div class="nav-overlay" id="nav-overlay"></div>
-
         <!-- Mobile Navigation Menu -->
         <div class="nav-menu-mobile" id="nav-mobile">
             <ul>
@@ -718,7 +623,6 @@
             </ul>
         </div>
     </header>
-    
     <main>
         <div>
         {% block body %}
@@ -732,7 +636,6 @@
                     </div>
                 </div>
             {% endif %}
-            
             <div class="content-wrapper">
                 <div class="content-card">
                     <div class="content-inner">
@@ -746,7 +649,6 @@
         {% endblock body %}
         </div>
     </main>
-
     <script>
         // Mobile Navigation Toggle
         const navToggle = document.getElementById('nav-toggle');
@@ -755,10 +657,12 @@
         const body = document.body;
 
         function toggleMobileNav() {
+            const isActive = navToggle.classList.contains('active');
             navToggle.classList.toggle('active');
             navMobile.classList.toggle('active');
             navOverlay.classList.toggle('active');
             body.classList.toggle('nav-open');
+            navToggle.setAttribute('aria-expanded', !isActive);
         }
 
         function closeMobileNav() {
@@ -766,6 +670,7 @@
             navMobile.classList.remove('active');
             navOverlay.classList.remove('active');
             body.classList.remove('nav-open');
+            navToggle.setAttribute('aria-expanded', 'false');
         }
 
         // Event listeners
@@ -792,7 +697,6 @@
             }
         });
     </script>
-    
     {% block extra_body %}
     {% endblock extra_body %}
 </body>
