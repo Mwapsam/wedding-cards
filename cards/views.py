@@ -243,17 +243,21 @@ def event_detail(request, event_id):
 
 def verify_invitation(request, guest_id):
     guest = get_object_or_404(Guest, id=guest_id)
+    event = guest.invitation.event  # Get the related event
 
+    # Check if already verified
     if QRVerification.objects.filter(guest=guest).exists():
         return render(
             request,
             "invitations/verification_failed.html",
             {
                 "guest": guest,
+                "event": event,
                 "message": "This invitation has already been used.",
             },
         )
 
+    # Create verification and update check-in status
     QRVerification.objects.create(
         guest=guest,
         is_valid=True,
@@ -268,6 +272,7 @@ def verify_invitation(request, guest_id):
         "invitations/verification_success.html",
         {
             "guest": guest,
+            "event": event,
             "message": "Invitation verified successfully!",
         },
     )

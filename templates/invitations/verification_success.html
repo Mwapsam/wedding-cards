@@ -2,11 +2,75 @@
 {% load i18n %}
 
 {% block head_title %}
-    Verification Successful
+    Checked In: {{ event.title }}
 {% endblock %}
 
 {% block content %}
-  <h1>{{ message }}</h1>
-  <p>Guest: {{ guest.first_name }} {{ guest.last_name }}</p>
-  <p>Checked in at: {{ guest.check_in_time }}</p>
+<div class="verification-success">
+    <div class="success-header">
+        <div class="success-icon"></div>
+        <h1 class="success-title">{{ message }}</h1>
+        <p class="success-subtitle">Welcome to the celebration!</p>
+    </div>
+
+    <div class="details-grid">
+        <div class="details-card fade-in">
+            <div class="card-header">
+                <div class="card-icon">👤</div>
+                <h2 class="card-title">Guest Details</h2>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">Name:</span>
+                <span class="detail-value highlight-value">{{ guest.first_name }} {{ guest.last_name }}</span>
+            </div>
+            
+            {% if guest.email %}
+            <div class="detail-item">
+                <span class="detail-label">Email:</span>
+                <span class="detail-value">{{ guest.email }}</span>
+            </div>
+            {% endif %}
+            
+            <div class="detail-item">
+                <span class="detail-label">Checked in:</span>
+                <span class="detail-value">{{ guest.check_in_time|date:"F d, Y H:i" }}</span>
+            </div>
+        </div>
+
+        <div class="details-card fade-in">
+            <div class="card-header">
+                <div class="card-icon">🎉</div>
+                <h2 class="card-title">Event Details</h2>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">Event:</span>
+                <span class="detail-value highlight-value">{{ event.title }}</span>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">Couple:</span>
+                <span class="detail-value">{{ event.couple }}</span>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">Date & Time:</span>
+                <span class="detail-value">{{ event.date|date:"F d, Y H:i" }}</span>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">Venue:</span>
+                <span class="detail-value">{{ event.venue }}</span>
+            </div>
+            
+            {% if event.description %}
+            <div class="detail-item">
+                <span class="detail-label">Description:</span>
+                <span class="detail-value">{{ event.description }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock content %}
