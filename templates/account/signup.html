@@ -31,31 +31,34 @@
             </div>
         {% endif %}
         <div class="form-field">
-            <label for="id_first_name" class="form-label">First Name</label>
-            <input type="text" id="id_first_name" name="first_name" placeholder="Enter your first name" value="{{ form.first_name.value|default:'' }}" required>
+            <label for="id_first_name" class="form-label">{% trans "First Name" %}</label>
+            <input type="text" id="id_first_name" name="first_name" placeholder="{% trans 'Enter your first name' %}" value="{{ form.first_name.value|default:'' }}">
         </div>
         <div class="form-field">
-            <label for="id_last_name" class="form-label">Last Name</label>
-            <input type="text" id="id_last_name" name="last_name" placeholder="Enter your last name" value="{{ form.last_name.value|default:'' }}" required>
+            <label for="id_last_name" class="form-label">{% trans "Last Name" %}</label>
+            <input type="text" id="id_last_name" name="last_name" placeholder="{% trans 'Enter your last name' %}" value="{{ form.last_name.value|default:'' }}">
         </div>
         <div class="form-field">
-            <label for="id_email">{% trans "Email" %}</label>
-            <input type="email" name="email" id="id_email" required>
+            <label for="id_email" class="form-label">{% trans "Email" %}</label>
+            <input type="email" id="id_email" name="email" placeholder="{% trans 'Enter your email' %}" value="{{ form.email.value|default:'' }}">
+        </div>
+        <div class="form-field input-group">
+            <label for="id_phone" class="form-label">{% trans "Phone Number" %}</label>
+            <div class="input-with-prefix">
+                <span class="phone-prefix">+26</span>
+                <input type="text" id="id_phone" name="phone" placeholder="{% trans 'Enter your phone number (No country code)' %}" value="{{ form.phone.value|default:'' }}" required>
+            </div>
         </div>
         <div class="form-field">
-            <label for="id_phone">{% trans "Phone Number" %}</label>
-            <input type="text" id="id_phone" name="phone" placeholder="{% trans 'Enter your phone number' %}" value="{{ form.phone.value|default:'' }}" required>
+            <label for="id_password1" class="form-label">{% trans "Password" %}</label>
+            <input type="password" id="id_password1" name="password1" required>
         </div>
         <div class="form-field">
-            <label for="id_password1">{% trans "Password" %}</label>
-            <input type="password" name="password1" id="id_password1" required>
-        </div>
-        <div class="form-field">
-            <label for="id_password2">{% trans "Confirm Password" %}</label>
-            <input type="password" name="password2" id="id_password2" required>
+            <label for="id_password2" class="form-label">{% trans "Confirm Password" %}</label>
+            <input type="password" id="id_password2" name="password2" required>
         </div>
         <div class="form-actions">
-            <input class="btn-primary" type="submit" value="{% trans "Sign Up" %}" />
+            <input class="btn-primary" type="submit" value="{% trans 'Sign Up' %}" />
         </div>
     </form>
     <div class="divider">
@@ -64,4 +67,23 @@
     <div class="signin-prompt">
         <p>{% translate "Already have an account?" %} <a href="{% url 'account_login' %}">{% translate "Sign In" %}</a></p>
     </div>
+
+    <style>
+        .phone-prefix {
+            display: none;
+        }
+    </style>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneInput = document.getElementById('id_phone');
+            const form = phoneInput.closest('form');
+            form.addEventListener('submit', function(event) {
+                if (phoneInput.value && !phoneInput.value.startsWith('+26')) {
+                    phoneInput.value = '+26' + phoneInput.value.replace(/^\+26/, '');
+                }
+            });
+        });
+    </script>
 {% endblock content %}
