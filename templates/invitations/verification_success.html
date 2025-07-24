@@ -7,6 +7,6 @@
 
 {% block content %}
   <h1>{{ message }}</h1>
-  <p>Guest: {{ guest.full_name }}</p>
+  <p>Guest: {{ guest.first_name }} {{ guest.last_name }}</p>
   <p>Checked in at: {{ guest.check_in_time }}</p>
 {% endblock content %}
