@@ -127,6 +127,9 @@ class WeddingEvent(models.Model):
     venue = models.CharField(max_length=255)
     description = models.TextField(blank=True)
 
+    class Meta:
+        ordering = ['-date']
+
     def __str__(self):
         return f"{self.title} at {self.venue}"
 
@@ -136,8 +139,6 @@ class Invitation(models.Model):
     event = models.ForeignKey(
         WeddingEvent, on_delete=models.CASCADE, related_name="invitations"
     )
-    card_image = models.ImageField(upload_to="invitation_cards/", blank=True, null=True)
-    qr_code = models.ImageField(upload_to="qr_codes/", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -157,28 +158,31 @@ class Guest(models.Model):
     last_name = models.CharField(max_length=50)
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=15, blank=True)
-    is_attending = models.BooleanField(default=False)
+    is_attending = models.BooleanField(default=True)
     checked_in = models.BooleanField(default=False)
     check_in_time = models.DateTimeField(null=True, blank=True)
 
     card_image = models.ImageField(upload_to="guest_cards/", blank=True, null=True)
     qr_code = models.ImageField(upload_to="qr_codes/", blank=True)
 
-    class Meta:
-        unique_together = ["invitation", "email"]
-
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
 
 class QRVerification(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    invitation = models.ForeignKey(
-        Invitation, on_delete=models.CASCADE, related_name="verifications"
+    guest = models.ForeignKey(
+        "Guest",
+        on_delete=models.CASCADE,
+        related_name="verifications",
+        null=True,
     )
     scanned_at = models.DateTimeField(auto_now_add=True)
     is_valid = models.BooleanField(default=False)
-    scanned_by = models.ForeignKey("User", on_delete=models.SET_NULL, null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["guest"], name="unique_qrverification_guest")
+        ]
 
     def __str__(self):
-        return f"Verification for {self.invitation.id} at {self.scanned_at}"
+        return f"Verification for {self.guest} at {self.scanned_at}"

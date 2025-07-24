@@ -14,6 +14,6 @@ urlpatterns = [
     path("profile/load-event-form/", views.load_event_form, name="load_event_form"),
     path("profile/load-guest-form/", views.load_guest_form, name="load_guest_form"),
     path("event/<uuid:event_id>/", views.event_detail, name="event_detail"),
-    path("verify/<uuid:token>/", views.verify_invitation, name="verify_invitation"),
+    path("verify/<uuid:guest_id>/", views.verify_invitation, name="verify_invitation"),
     path("invitation/<uuid:pk>/", views.invitation_card_view, name="invitation_card"),
 ]

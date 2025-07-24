@@ -1,8 +1,8 @@
 <form 
     hx-post="{% url 'add_event' %}" 
     hx-target="#modal-body" 
-    x-target="#event-list" 
-    hx-swap="outerHTML"
+    hx-swap="innerHTML"
+    hx-indicator=".htmx-indicator"
     method="post"
 >
     {% csrf_token %}
@@ -18,5 +18,6 @@
             {% endif %}
         </div>
     {% endfor %}
+    <div class="htmx-indicator">Creating event...</div>
     <button type="submit" class="btn-primary">Create Event</button>
 </form>

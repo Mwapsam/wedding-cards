@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+
+    <style>
+      :root {
+        --primary-black: #0a0a0a;
+        --secondary-black: #1a1a1a;
+        --accent-purple: #8b5cf6;
+        --light-purple: #a78bfa;
+        --dark-purple: #7c3aed;
+        --pure-white: #ffffff;
+        --off-white: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+
+      body {
+        background: var(--primary-black);
+        color: var(--pure-white);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+
+      .signin-container {
+        display: flex;
+        min-height: 100vh;
+        background: linear-gradient(
+          135deg,
+          var(--primary-black) 0%,
+          var(--secondary-black) 100%
+        );
+      }
+
+      .left-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 4rem 3rem;
+        background: linear-gradient(
+          135deg,
+          var(--dark-purple) 0%,
+          var(--accent-purple) 100%
+        );
+        position: relative;
+        overflow: hidden;
+      }
+
+      .left-panel::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.1) 0%,
+          transparent 70%
+        );
+        animation: rotate 20s linear infinite;
+      }
+
+      @keyframes rotate {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .project-info {
+        position: relative;
+        z-index: 2;
+      }
+
+      .project-logo {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(
+          45deg,
+          var(--pure-white),
+          var(--light-purple)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .project-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+        color: var(--pure-white);
+      }
+
+      .project-description {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+        color: var(--pure-white);
+      }
+
+      .project-features {
+        list-style: none;
+        padding: 0;
+      }
+
+      .project-features li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        color: var(--pure-white);
+      }
+
+      .project-features li::before {
+        content: "✓";
+        margin-right: 1rem;
+        color: var(--light-purple);
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      .right-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 4rem 3rem;
+        background: var(--secondary-black);
+        color: var(--pure-white);
+        border-left: 1px solid var(--gray-800);
+      }
+
+      .signin-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .signin-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--pure-white);
+      }
+
+      .signin-subtitle {
+        font-size: 1.1rem;
+        color: var(--gray-300);
+      }
+
+      .signup-prompt {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: var(--gray-900);
+        border-radius: 8px;
+        color: var(--gray-300);
+        border: 1px solid var(--gray-800);
+      }
+
+      .signup-prompt a {
+        color: var(--accent-purple);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .signup-prompt a:hover {
+        text-decoration: underline;
+        color: var(--light-purple);
+      }
+
+      .signin-form {
+        max-width: 400px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      .form-errors {
+        margin-bottom: 1.5rem;
+      }
+
+      .error-card {
+        background: rgba(220, 38, 38, 0.1);
+        border: 1px solid rgba(220, 38, 38, 0.3);
+        color: #fca5a5;
+        padding: 1rem;
+        border-radius: 8px;
+      }
+
+      .error-card ul {
+        margin-top: 0.5rem;
+        padding-left: 1rem;
+      }
+
+      .form-field {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-field label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--pure-white);
+      }
+
+      .form-field input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid var(--gray-800);
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: var(--gray-900);
+        color: var(--pure-white);
+      }
+
+      .form-field input::placeholder {
+        color: var(--gray-700);
+      }
+
+      .form-field input:focus {
+        outline: none;
+        border-color: var(--accent-purple);
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+      }
+
+      .remember-me {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .remember-me input[type="checkbox"] {
+        margin-right: 0.5rem;
+        transform: scale(1.2);
+        accent-color: var(--accent-purple);
+      }
+
+      .remember-me label {
+        color: var(--gray-300);
+        cursor: pointer;
+      }
+
+      .form-actions {
+        margin-bottom: 1.5rem;
+      }
+
+      .btn-primary {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(
+          135deg,
+          var(--accent-purple),
+          var(--dark-purple)
+        );
+        color: var(--pure-white);
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-medium);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-large);
+        background: linear-gradient(
+          135deg,
+          var(--light-purple),
+          var(--accent-purple)
+        );
+      }
+
+      .forgot-password {
+        text-align: center;
+      }
+
+      .forgot-password a {
+        color: var(--accent-purple);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .forgot-password a:hover {
+        text-decoration: underline;
+        color: var(--light-purple);
+      }
+
+      .divider {
+        text-align: center;
+        margin: 2rem 0;
+        position: relative;
+      }
+
+      .divider::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: var(--gray-800);
+      }
+
+      .divider span {
+        background: var(--secondary-black);
+        padding: 0 1rem;
+        color: var(--gray-300);
+        position: relative;
+      }
+
+      .social-login-section {
+        margin-top: 1rem;
+      }
+
+      @media (max-width: 768px) {
+        .signin-container {
+          flex-direction: column;
+        }
+
+        .left-panel {
+          padding: 2rem 1.5rem;
+          min-height: 40vh;
+        }
+
+        .project-title {
+          font-size: 2rem;
+        }
+
+        .right-panel {
+          padding: 2rem 1.5rem;
+        }
+
+        .signin-title {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    {% block content %}
+    {% endblock content %}
+  </body>
+</html>

@@ -5,7 +5,8 @@ from django.conf import settings
 from django.db.models import Count
 from django.template.loader import render_to_string
 from django.contrib import messages
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
+from django.utils.timezone import now
 
 from utils.generators import generate_wedding_card
 
@@ -83,8 +84,10 @@ def profile(request):
         messages.error(request, "You are not registered as a wedding planner.")
         return redirect("profile")
 
-    events = WeddingEvent.objects.filter(planner=planner).annotate(
-        guest_count=Count("invitations__guests", distinct=True)
+    events = (
+        WeddingEvent.objects.filter(planner=planner)
+        .annotate(guest_count=Count("invitations__guests", distinct=True))
+        .order_by("-date")
     )
     invitations = Invitation.objects.filter(event__planner=planner)
     event_form = WeddingEventForm()
@@ -97,6 +100,7 @@ def profile(request):
     return render(request, "profile.html", context)
 
 
+@login_required
 def add_event(request):
     if request.headers.get("HX-Request") != "true":
         return HttpResponse("This endpoint is for HTMX requests only.", status=400)
@@ -115,32 +119,38 @@ def add_event(request):
         event_list_html = render_to_string(
             "partials/event_list.html",
             {
-                "events": WeddingEvent.objects.filter(planner=planner).annotate(
-                    guest_count=Count("invitations__guests", distinct=True)
-                )
+                "events": WeddingEvent.objects.filter(planner=planner)
+                .annotate(guest_count=Count("invitations__guests", distinct=True))
+                .order_by("-date")
             },
             request=request,
         )
 
         response_html = f"""
-            <div id="event-list" hx-swap="outerHTML">
+            <div id="event-list" hx-swap-oob="innerHTML">
                 {event_list_html}
             </div>
+            <div id="modal-body" hx-swap-oob="innerHTML"></div>
+            <div class="success-card">Event created successfully!</div>
             <script>
-                document.getElementById("modal").style.display = "none";
+                // Close modal after a short delay
+                setTimeout(() => {{
+                    document.getElementById("modal").style.display = "none";
+                }}, 1000);
             </script>
         """
         return HttpResponse(response_html)
 
     else:
-        html = render_to_string(
-            "partials/event_form.html", {"event_form": form}, request=request
-        )
+        html = render_to_string("partials/event_form.html", {"event_form": form}, request=request)
         return HttpResponse(html)
 
 
 @login_required
 def add_guest(request):
+    if request.headers.get("HX-Request") != "true":
+        return HttpResponse("This endpoint is for HTMX requests only.", status=400)
+
     try:
         planner = WeddingPlanner.objects.get(user=request.user)
     except WeddingPlanner.DoesNotExist:
@@ -150,27 +160,43 @@ def add_guest(request):
     invitation = get_object_or_404(Invitation, id=invitation_id, event__planner=planner)
 
     form = GuestForm(request.POST, invitation=invitation)
-
     if form.is_valid():
         guest = form.save(commit=False)
         guest.invitation = invitation
-        guest.save()  # Save the guest!
+        guest.save()
 
-        html = render_to_string(
+        invitation_list_html = render_to_string(
             "partials/invitation_list.html",
-            {"invitations": Invitation.objects.filter(event__planner=planner)},
+            {
+                "invitations": Invitation.objects.filter(
+                    event__planner=planner
+                ).annotate(guest_count=Count("guests"))
+            },
             request=request,
         )
-        return HttpResponse(html)
+
+        response_html = f"""
+            <div id="invitation-list" hx-swap-oob="innerHTML">
+                {invitation_list_html}
+            </div>
+            <div id="modal-body" hx-swap-oob="innerHTML"></div>
+            <div class="success-card">Guest {guest.first_name} added successfully!</div>
+            <script>
+                setTimeout(() => {{
+                    document.getElementById("modal").style.display = "none";
+                }}, 1000);
+            </script>
+        """
+        return HttpResponse(response_html)
 
     else:
-        # Render the guest form again with error messages
         invitations = Invitation.objects.filter(event__planner=planner)
         html = render_to_string(
             "partials/guest_form.html",
             {"guest_form": form, "invitations": invitations},
             request=request,
         )
+        print("Form: ", form)
         return HttpResponse(html, status=400)
 
 
@@ -215,21 +241,41 @@ def event_detail(request, event_id):
     )
 
 
-def verify_invitation(request, token):
-    invitation = get_object_or_404(Invitation, pk=token)
+def verify_invitation(request, guest_id):
+    guest = get_object_or_404(Guest, id=guest_id)
+
+    if QRVerification.objects.filter(guest=guest).exists():
+        return render(
+            request,
+            "verification_failed.html",
+            {
+                "guest": guest,
+                "message": "This invitation has already been used.",
+            },
+        )
 
     QRVerification.objects.create(
-        invitation=invitation,
+        guest=guest,
         is_valid=True,
-        scanned_by=request.user if request.user.is_authenticated else None,
+        scanned_at=now(),
     )
+    guest.checked_in = True
+    guest.check_in_time = now()
+    guest.save()
 
-    return HttpResponse(f"Invitation {invitation.id} verified successfully!")
+    return render(
+        request,
+        "verification_success.html",
+        {
+            "guest": guest,
+            "message": "Invitation verified successfully!",
+        },
+    )
 
 
 def invitation_card_view(request, pk):
     invitation = get_object_or_404(Guest, pk=pk)
-    
+
     return render(
         request, "invitations/invitation_card.html", {"invitation": invitation}
     )

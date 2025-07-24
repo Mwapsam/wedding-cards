@@ -1,0 +1,12 @@
+{% extends "allauth/layouts/base.html" %}
+{% load i18n %}
+
+{% block head_title %}
+    Verification Successful
+{% endblock %}
+
+{% block content %}
+  <h1>{{ message }}</h1>
+  <p>Guest: {{ guest.full_name }}</p>
+  <p>Checked in at: {{ guest.check_in_time }}</p>
+{% endblock content %}
