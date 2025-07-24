@@ -247,7 +247,7 @@ def verify_invitation(request, guest_id):
     if QRVerification.objects.filter(guest=guest).exists():
         return render(
             request,
-            "verification_failed.html",
+            "invitations/verification_failed.html",
             {
                 "guest": guest,
                 "message": "This invitation has already been used.",
@@ -265,7 +265,7 @@ def verify_invitation(request, guest_id):
 
     return render(
         request,
-        "verification_success.html",
+        "invitations/verification_success.html",
         {
             "guest": guest,
             "message": "Invitation verified successfully!",
