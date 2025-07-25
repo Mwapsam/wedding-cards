@@ -405,7 +405,6 @@
   .actions {
     display: flex;
     gap: 1rem;
-    flex-wrap: wrap;
     margin-top: 1rem;
   }
 
@@ -509,11 +508,13 @@
   }
 
   .image-card {
-    overflow-y: auto; /* vertical scroll only */
-    overflow-x: hidden; /* hide horizontal scroll */
-    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
     padding-bottom: 4rem;
-    scrollbar-width: none; /* for Firefox */
+    scrollbar-width: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 
   /* Hide scrollbar for Chrome, Edge, and Safari */
@@ -725,6 +726,10 @@
     
     .detail-label {
         min-width: auto;
+    }
+
+    .actions {
+      flex-wrap: wrap;
     }
 }
 

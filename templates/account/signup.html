@@ -1,89 +1,130 @@
 <!-- templates/account/signup.html -->
-{% extends "account/base_entrance.html" %}
-{% load i18n allauth account %}
+{% extends "account/base_entrance.html" %} 
+{% load i18n allauth account %} 
 
-{% block head_title %}
-    {% trans "Sign Up" %}
-{% endblock head_title %}
+{% block head_title %} 
+    {% trans "Sign Up" %} 
+{% endblock head_title %} 
 
 {% block content %}
+<div class="content-card--form content-card--narrow">
+  <div class="content-inner">
     <div class="signin-header">
-        <h1 class="signin-title">{% trans "Create Account" %}</h1>
-        <p class="signin-subtitle">Join us today and start your journey</p>
+      <h1 class="signin-title">{% trans "Create Account" %}</h1>
+      <p class="signin-subtitle">Join us today and start your journey</p>
     </div>
     <form class="signin-form" method="post" action="{% url 'account_signup' %}">
-        {% csrf_token %}
-        {% if form.errors %}
-            <div class="form-errors">
-                <div class="error-card">
-                    <strong>{% trans "Please correct the errors below:" %}</strong>
-                    <ul>
-                        {% for field in form %}
-                            {% for error in field.errors %}
-                                <li>{{ field.label }}: {{ error }}</li>
-                            {% endfor %}
-                        {% endfor %}
-                        {% for error in form.non_field_errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        {% endif %}
-        <div class="form-field">
-            <label for="id_first_name" class="form-label">{% trans "First Name" %}</label>
-            <input type="text" id="id_first_name" name="first_name" placeholder="{% trans 'Enter your first name' %}" value="{{ form.first_name.value|default:'' }}">
+      {% csrf_token %} {% if form.errors %}
+      <div class="form-errors">
+        <div class="error-card">
+          <strong>{% trans "Please correct the errors below:" %}</strong>
+          <ul>
+            {% for field in form %} {% for error in field.errors %}
+            <li>{{ field.label }}: {{ error }}</li>
+            {% endfor %} {% endfor %} {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
         </div>
-        <div class="form-field">
-            <label for="id_last_name" class="form-label">{% trans "Last Name" %}</label>
-            <input type="text" id="id_last_name" name="last_name" placeholder="{% trans 'Enter your last name' %}" value="{{ form.last_name.value|default:'' }}">
+      </div>
+      {% endif %}
+      <div class="form-field">
+        <label for="id_first_name" class="form-label"
+          >{% trans "First Name" %}</label
+        >
+        <input
+          type="text"
+          id="id_first_name"
+          name="first_name"
+          placeholder="{% trans 'Enter your first name' %}"
+          value="{{ form.first_name.value|default:'' }}"
+        />
+      </div>
+      <div class="form-field">
+        <label for="id_last_name" class="form-label"
+          >{% trans "Last Name" %}</label
+        >
+        <input
+          type="text"
+          id="id_last_name"
+          name="last_name"
+          placeholder="{% trans 'Enter your last name' %}"
+          value="{{ form.last_name.value|default:'' }}"
+        />
+      </div>
+      <div class="form-field">
+        <label for="id_email" class="form-label">{% trans "Email" %}</label>
+        <input
+          type="email"
+          id="id_email"
+          name="email"
+          placeholder="{% trans 'Enter your email' %}"
+          value="{{ form.email.value|default:'' }}"
+        />
+      </div>
+      <div class="form-field input-group">
+        <label for="id_phone" class="form-label"
+          >{% trans "Phone Number" %}</label
+        >
+        <div class="input-with-prefix">
+          <span class="phone-prefix">+26</span>
+          <input
+            type="text"
+            id="id_phone"
+            name="phone"
+            placeholder="{% trans 'Enter your phone number (No country code)' %}"
+            value="{{ form.phone.value|default:'' }}"
+            required
+          />
         </div>
-        <div class="form-field">
-            <label for="id_email" class="form-label">{% trans "Email" %}</label>
-            <input type="email" id="id_email" name="email" placeholder="{% trans 'Enter your email' %}" value="{{ form.email.value|default:'' }}">
-        </div>
-        <div class="form-field input-group">
-            <label for="id_phone" class="form-label">{% trans "Phone Number" %}</label>
-            <div class="input-with-prefix">
-                <span class="phone-prefix">+26</span>
-                <input type="text" id="id_phone" name="phone" placeholder="{% trans 'Enter your phone number (No country code)' %}" value="{{ form.phone.value|default:'' }}" required>
-            </div>
-        </div>
-        <div class="form-field">
-            <label for="id_password1" class="form-label">{% trans "Password" %}</label>
-            <input type="password" id="id_password1" name="password1" required>
-        </div>
-        <div class="form-field">
-            <label for="id_password2" class="form-label">{% trans "Confirm Password" %}</label>
-            <input type="password" id="id_password2" name="password2" required>
-        </div>
-        <div class="form-actions">
-            <input class="btn-primary" type="submit" value="{% trans 'Sign Up' %}" />
-        </div>
+      </div>
+      <div class="form-field">
+        <label for="id_password1" class="form-label"
+          >{% trans "Password" %}</label
+        >
+        <input type="password" id="id_password1" name="password1" required />
+      </div>
+      <div class="form-field">
+        <label for="id_password2" class="form-label"
+          >{% trans "Confirm Password" %}</label
+        >
+        <input type="password" id="id_password2" name="password2" required />
+      </div>
+      <div class="form-actions">
+        <input
+          class="btn-primary"
+          type="submit"
+          value="{% trans 'Sign Up' %}"
+        />
+      </div>
     </form>
     <div class="divider">
-        <span>{% trans "or" %}</span>
+      <span>{% trans "or" %}</span>
     </div>
     <div class="signin-prompt">
-        <p>{% translate "Already have an account?" %} <a href="{% url 'account_login' %}">{% translate "Sign In" %}</a></p>
+      <p>
+        {% translate "Already have an account?" %}
+        <a href="{% url 'account_login' %}">{% translate "Sign In" %}</a>
+      </p>
     </div>
+  </div>
+</div>
 
-    <style>
-        .phone-prefix {
-            display: none;
-        }
-    </style>
+<style>
+  .phone-prefix {
+    display: none;
+  }
+</style>
 
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const phoneInput = document.getElementById('id_phone');
-            const form = phoneInput.closest('form');
-            form.addEventListener('submit', function(event) {
-                if (phoneInput.value && !phoneInput.value.startsWith('+26')) {
-                    phoneInput.value = '+26' + phoneInput.value.replace(/^\+26/, '');
-                }
-            });
-        });
-    </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const phoneInput = document.getElementById("id_phone");
+    const form = phoneInput.closest("form");
+    form.addEventListener("submit", function (event) {
+      if (phoneInput.value && !phoneInput.value.startsWith("+26")) {
+        phoneInput.value = "+26" + phoneInput.value.replace(/^\+26/, "");
+      }
+    });
+  });
+</script>
 {% endblock content %}

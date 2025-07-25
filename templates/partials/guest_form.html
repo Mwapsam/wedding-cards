@@ -1,7 +1,7 @@
 <form 
     hx-post="{% url 'add_guest' %}" 
-    hx-target="#modal-body" 
-    hx-swap="innerHTML"
+    hx-target="#event-list" 
+    hx-swap="outerHTML"
     method="post"
     hx-on::after-request="if (event.detail.successful) this.reset()"
 >

@@ -1,7 +1,7 @@
 <form 
     hx-post="{% url 'add_event' %}" 
-    hx-target="#modal-body" 
-    hx-swap="innerHTML"
+    hx-target="#event-list"
+    hx-swap="outerHTML"
     hx-indicator=".htmx-indicator"
     method="post"
 >

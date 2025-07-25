@@ -5,10 +5,9 @@ from django.conf import settings
 from django.db.models import Count
 from django.template.loader import render_to_string
 from django.contrib import messages
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse
 from django.utils.timezone import now
 
-from utils.generators import generate_wedding_card
 
 from .models import Invitation, Guest, QRVerification, WeddingPlanner, WeddingEvent
 from .forms import GuestForm, WeddingEventForm
@@ -131,12 +130,13 @@ def add_event(request):
                 {event_list_html}
             </div>
             <div id="modal-body" hx-swap-oob="innerHTML"></div>
-            <div class="success-card">Event created successfully!</div>
+            <div class="success-card">{event_list_html}</div>
             <script>
                 // Close modal after a short delay
                 setTimeout(() => {{
                     document.getElementById("modal").style.display = "none";
                 }}, 1000);
+                htmx.process(document.body);
             </script>
         """
         return HttpResponse(response_html)
@@ -180,11 +180,12 @@ def add_guest(request):
                 {invitation_list_html}
             </div>
             <div id="modal-body" hx-swap-oob="innerHTML"></div>
-            <div class="success-card">Guest {guest.first_name} added successfully!</div>
+            <div class="success-card">{invitation_list_html}</div>
             <script>
                 setTimeout(() => {{
                     document.getElementById("modal").style.display = "none";
                 }}, 1000);
+                htmx.process(document.body);
             </script>
         """
         return HttpResponse(response_html)

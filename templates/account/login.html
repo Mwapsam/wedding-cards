@@ -6,6 +6,8 @@
 {% endblock head_title %}
 
 {% block content %}
+<div class="content-card--form content-card--narrow">
+  <div class="content-inner">
     <div class="signin-header">
         <h1 class="signin-title">{% trans "Sign In" %}</h1>
         <p class="signin-subtitle">Welcome back! Please sign in to your account</p>
@@ -74,4 +76,6 @@
             {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
         </div>
     {% endif %}
+  </div>
+</div>
 {% endblock content %}
