@@ -4,6 +4,8 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.views.generic.base import TemplateView
 
+from cards.api import CustomObtainAuthToken
+
 # from allauth.account.decorators import secure_admin_login
 
 
@@ -21,6 +23,7 @@ urlpatterns = [
 
 urlpatterns += [
     path("api/", include("wedding_res.api_router")),
+    path("api/login/", CustomObtainAuthToken.as_view(), name="api_token_auth"),
     path("api-auth/", include("rest_framework.urls")),
 ]
 

@@ -2,8 +2,11 @@ from rest_framework import serializers, viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
+
+from cards.serierizers import CustomAuthTokenSerializer
 from .models import WeddingPlanner, WeddingEvent, Invitation, Guest, QRVerification
 from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.utils.translation import gettext_lazy as _
 
@@ -201,3 +204,15 @@ class QRVerificationViewSet(viewsets.ModelViewSet):
             {"status": "verified", "guest": GuestSerializer(verification.guest).data}
         )
 
+
+class CustomObtainAuthToken(ObtainAuthToken):
+    serializer_class = CustomAuthTokenSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(
+            data=request.data, context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data["user"]
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({"token": token.key, "user": UserSerializer(user).data})
