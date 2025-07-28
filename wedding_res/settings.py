@@ -25,6 +25,9 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.facebook",
     "allauth.usersessions",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "django_extensions",
     "cards",
 ]
 
@@ -229,8 +232,18 @@ COMPRESS_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 CSRF_TRUSTED_ORIGINS = [
     "https://cards.dreamjobzm.com",
-    "http://localhost:8000",  # For local development
+    "http://localhost:8000", 
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
 
 LOG_DIR = os.path.join(BASE_DIR, 'utils')
 os.makedirs(LOG_DIR, exist_ok=True)
