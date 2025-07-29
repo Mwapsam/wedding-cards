@@ -232,6 +232,9 @@ else:
 
 COMPRESS_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
+CORS_ALLOW_ALL_ORIGINS = True
+
+
 CSRF_TRUSTED_ORIGINS = [
     "https://cards.dreamjobzm.com",
     "http://localhost:8000", 
