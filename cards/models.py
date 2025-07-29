@@ -27,9 +27,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_superuser", False)
         return self._create_user(email, phone, password, **extra_fields)
 
-    def create_superuser(
-        self, email=None, phone=None, password=None, **extra_fields
-    ):
+    def create_superuser(self, email=None, phone=None, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
 
@@ -43,7 +41,7 @@ class CustomUserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     PHONE_FIELD = "phone"
-    
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(
         _("email address"),
@@ -73,7 +71,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
 
-    USERNAME_FIELD = "email"  
+    USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"
     PHONE_FIELD = "phone_number"
 
@@ -126,9 +124,18 @@ class WeddingEvent(models.Model):
     date = models.DateTimeField()
     venue = models.CharField(max_length=255)
     description = models.TextField(blank=True)
+    status = models.CharField(
+        max_length=20,
+        default="planning",
+        choices=[
+            ("planning", "Planning"),
+            ("active", "Active"),
+            ("completed", "Completed"),
+        ],
+    )
 
     class Meta:
-        ordering = ['-date']
+        ordering = ["-date"]
 
     def __str__(self):
         return f"{self.title} at {self.venue}"
@@ -143,7 +150,6 @@ class Invitation(models.Model):
 
     def __str__(self):
         return f"Invitation {self.id} for {self.event.title}"
-
 
     def get_absolute_url(self):
         return reverse("verify_invitation", args=[str(self.id)])
@@ -182,7 +188,9 @@ class QRVerification(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["guest"], name="unique_qrverification_guest")
+            models.UniqueConstraint(
+                fields=["guest"], name="unique_qrverification_guest"
+            )
         ]
 
     def __str__(self):

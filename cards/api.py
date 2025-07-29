@@ -57,22 +57,41 @@ class WeddingPlannerSerializer(serializers.ModelSerializer):
 
 
 class WeddingEventSerializer(serializers.ModelSerializer):
-    planner = WeddingPlannerSerializer(read_only=True)
-    planner_id = serializers.UUIDField(write_only=True)
-
     class Meta:
         model = WeddingEvent
         fields = [
             "id",
-            "planner",
-            "planner_id",
             "title",
-            "couple",
             "date",
             "venue",
-            "description",
+            "status",
+            "planner_id",
+            "total_invitations",
+            "checked_in_guests",
+            "total_guests",
         ]
-        read_only_fields = ["id"]
+        read_only_fields = [
+            "id",
+            "planner_id",
+            "total_invitations",
+            "checked_in_guests",
+            "total_guests",
+        ]
+
+    def validate(self, data):
+        if not data.get("title"):
+            raise serializers.ValidationError(
+                {"field_errors": {"title": _("This field may not be blank.")}}
+            )
+        if not data.get("date"):
+            raise serializers.ValidationError(
+                {"field_errors": {"date": _("This field may not be blank.")}}
+            )
+        if not data.get("venue"):
+            raise serializers.ValidationError(
+                {"field_errors": {"venue": _("This field may not be blank.")}}
+            )
+        return data
 
 
 class InvitationSerializer(serializers.ModelSerializer):
