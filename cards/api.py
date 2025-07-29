@@ -175,6 +175,8 @@ class WeddingEventViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(planner__user=self.request.user)
 
+    def perform_create(self, serializer):
+        serializer.save(planner=self.request.user.weddingplanner)
 
 class InvitationViewSet(viewsets.ModelViewSet):
     queryset = Invitation.objects.all()
