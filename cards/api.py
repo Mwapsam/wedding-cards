@@ -62,21 +62,14 @@ class WeddingEventSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "title",
+            "couple",
             "date",
             "venue",
+            "description",
             "status",
-            "planner_id",
-            "total_invitations",
-            "checked_in_guests",
-            "total_guests",
+            "planner",
         ]
-        read_only_fields = [
-            "id",
-            "planner_id",
-            "total_invitations",
-            "checked_in_guests",
-            "total_guests",
-        ]
+        read_only_fields = ["id", "planner"]
 
     def validate(self, data):
         if not data.get("title"):
