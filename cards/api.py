@@ -116,8 +116,20 @@ class GuestSerializer(serializers.ModelSerializer):
             "check_in_time",
             "card_image",
             "qr_code",
+            "guest_name",
         ]
-        read_only_fields = ["id", "check_in_time", "card_image", "qr_code"]
+        read_only_fields = [
+            "id",
+            "check_in_time",
+            "card_image",
+            "qr_code",
+            "invitation",
+            "invitation_id",
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+        ]
 
 
 class QRVerificationSerializer(serializers.ModelSerializer):
@@ -194,6 +206,46 @@ class GuestViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return self.queryset.filter(invitation__event__planner__user=self.request.user)
+
+    def perform_create(self, serializer):
+        invitation_id = self.request.data.get("invitation_id")
+        invitation = Invitation.objects.filter(
+            id=invitation_id, event__planner=self.request.user.weddingplanner
+        ).first()
+        if not invitation:
+            raise serializers.ValidationError(
+                {
+                    "non_field_errors": [
+                        _("Invalid invitation ID or you do not have permission.")
+                    ]
+                }
+            )
+        serializer.save(invitation=invitation) 
+
+    def perform_update(self, serializer):
+        invitation_id = self.request.data.get("invitation_id")
+        invitation = (
+            Invitation.objects.filter(
+                id=invitation_id, event__planner=self.request.user.weddingplanner
+            ).first()
+            if invitation_id
+            else serializer.instance.invitation
+        )
+        if not invitation:
+            raise serializers.ValidationError(
+                {
+                    "non_field_errors": [
+                        _("Invalid invitation ID or you do not have permission.")
+                    ]
+                }
+            )
+        serializer.save(invitation=invitation)
+
+    def get_serializer(self, *args, **kwargs):
+        if self.action in ["update", "partial_update"]:
+            kwargs["context"] = self.get_serializer_context()
+            return GuestSerializer(*args, **kwargs, read_only_fields=["id"])
+        return super().get_serializer(*args, **kwargs)
 
 
 class QRVerificationViewSet(viewsets.ModelViewSet):

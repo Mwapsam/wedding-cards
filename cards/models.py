@@ -160,10 +160,11 @@ class Guest(models.Model):
     invitation = models.ForeignKey(
         Invitation, on_delete=models.CASCADE, related_name="guests"
     )
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    email = models.EmailField(blank=True)
-    phone = models.CharField(max_length=15, blank=True)
+    guest_name = models.CharField(max_length=50, null=True, blank=True)
+    first_name = models.CharField(max_length=50, null=True, blank=True)
+    last_name = models.CharField(max_length=50, null=True, blank=True)
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=15, null=True, blank=True)
     is_attending = models.BooleanField(default=True)
     checked_in = models.BooleanField(default=False)
     check_in_time = models.DateTimeField(null=True, blank=True)
