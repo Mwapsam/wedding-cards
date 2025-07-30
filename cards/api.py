@@ -123,8 +123,6 @@ class GuestSerializer(serializers.ModelSerializer):
             "check_in_time",
             "card_image",
             "qr_code",
-            "invitation",
-            "invitation_id",
             "first_name",
             "last_name",
             "email",
