@@ -3,7 +3,7 @@ from allauth.account.forms import SignupForm
 from allauth.account.forms import LoginForm
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from .models import Guest, User, WeddingEvent
+from .models import Guest, User, WeddingEvent, EventSchedule
 from phonenumbers import parse, is_valid_number
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -101,8 +101,11 @@ class CustomLoginForm(LoginForm):
 class GuestForm(forms.ModelForm):
     class Meta:
         model = Guest
-        fields = ["first_name", "last_name", "email", "phone"]
+        fields = ["guest_name", "first_name", "last_name", "email", "phone", "payment_amount"]
         widgets = {
+            "guest_name": forms.TextInput(
+                attrs={"placeholder": "Enter full guest name (optional)"}
+            ),
             "first_name": forms.TextInput(
                 attrs={"placeholder": "Enter guest first name"}
             ),
@@ -111,6 +114,13 @@ class GuestForm(forms.ModelForm):
             ),
             "email": forms.EmailInput(attrs={"placeholder": "Enter guest email"}),
             "phone": forms.TextInput(attrs={"placeholder": "Enter guest phone number"}),
+            "payment_amount": forms.NumberInput(
+                attrs={"placeholder": "Enter registration fee (optional)", "step": "0.01"}
+            ),
+        }
+        help_texts = {
+            "guest_name": _("Use this if you prefer a single name field instead of first/last name."),
+            "payment_amount": _("Registration or entry fee for this guest (if applicable)."),
         }
 
     def __init__(self, *args, **kwargs):
@@ -153,6 +163,44 @@ class WeddingEventForm(forms.ModelForm):
             "venue": _("Location where the event will be held."),
             "description": _("Add any important details about the event."),
             "couple": _("Select the couple associated with this event."),
+        }
+
+    def clean_date(self):
+        date = self.cleaned_data.get("date")
+        if date and date < timezone.now():
+            raise forms.ValidationError(_("Event date must be in the future."))
+        return date
+
+
+class EventScheduleForm(forms.ModelForm):
+    class Meta:
+        model = EventSchedule
+        fields = ["event_name", "date", "location", "description", "order"]
+        widgets = {
+            "event_name": forms.TextInput(
+                attrs={"placeholder": "e.g., Ceremony, Reception, After Party"}
+            ),
+            "date": forms.DateTimeInput(
+                attrs={
+                    "type": "datetime-local",
+                    "placeholder": "Select date and time",
+                }
+            ),
+            "location": forms.TextInput(
+                attrs={"placeholder": "Enter location/venue"}
+            ),
+            "description": forms.Textarea(
+                attrs={"placeholder": "Additional details (optional)", "rows": 3}
+            ),
+            "order": forms.NumberInput(
+                attrs={"placeholder": "Event order (1, 2, 3...)", "min": "1"}
+            ),
+        }
+        help_texts = {
+            "event_name": _("Name of this specific event (e.g., 'Ceremony', 'Reception')."),
+            "date": _("Date and time for this specific event."),
+            "location": _("Where this specific event will take place."),
+            "order": _("Order in which events will occur (1 = first event)."),
         }
 
     def clean_date(self):

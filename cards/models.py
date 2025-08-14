@@ -141,6 +141,27 @@ class WeddingEvent(models.Model):
         return f"{self.title} at {self.venue}"
 
 
+class EventSchedule(models.Model):
+    """Model for multiple events within a wedding invitation"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    wedding_event = models.ForeignKey(
+        WeddingEvent, on_delete=models.CASCADE, related_name="event_schedules"
+    )
+    event_name = models.CharField(max_length=255, help_text="e.g., Ceremony, Reception, After Party")
+    date = models.DateTimeField()
+    location = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    order = models.PositiveIntegerField(default=1, help_text="Order of events (1, 2, 3, etc.)")
+    
+    class Meta:
+        ordering = ['order', 'date']
+        verbose_name = "Event Schedule"
+        verbose_name_plural = "Event Schedules"
+    
+    def __str__(self):
+        return f"{self.event_name} - {self.date.strftime('%B %d, %Y at %I:%M %p')}"
+
+
 class Invitation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     event = models.ForeignKey(
@@ -168,6 +189,10 @@ class Guest(models.Model):
     is_attending = models.BooleanField(default=True)
     checked_in = models.BooleanField(default=False)
     check_in_time = models.DateTimeField(null=True, blank=True)
+    payment_amount = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True,
+        help_text="Registration fee for this guest"
+    )
 
     card_image = models.ImageField(upload_to="guest_cards/", blank=True, null=True)
     qr_code = models.ImageField(upload_to="qr_codes/", blank=True)

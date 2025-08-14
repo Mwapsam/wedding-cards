@@ -6,13 +6,11 @@ import os
 import math
 
 
-def generate_wedding_card(event, invitation=None, qr_image=None):
-    # Portrait card dimensions
-    card_size = (600, 900)  # width x height (portrait)
+def generate_wedding_card(event, invitation=None, qr_image=None, invitee_name=None, events=None, payment_amount=None):
+    card_size = (600, 900)  
 
-    # Colors palette
-    background_gradient_start = (252, 250, 248)  # Warm white
-    background_gradient_end = (248, 242, 235)  # Deeper cream
+    background_gradient_start = (252, 250, 248)  
+    background_gradient_end = (248, 242, 235)  
     primary_text_color = (60, 50, 45)  # Dark brown
     accent_color = (170, 120, 70)  # Gold
     secondary_text_color = (100, 85, 75)  # Medium brown
@@ -111,8 +109,17 @@ def generate_wedding_card(event, invitation=None, qr_image=None):
         (x_pos, 130), invitation_text, fill=secondary_text_color, font=subtitle_font
     )
 
+    # Add invitee name if provided
+    current_y = 160
+    if invitee_name:
+        invitee_text = f"Dear {invitee_name},"
+        bbox = draw.textbbox((0, 0), invitee_text, font=accent_font)
+        x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+        draw.text((x_pos, current_y), invitee_text, fill=accent_color, font=accent_font)
+        current_y += 25
+
     # Decorative line under invitation text
-    line_y = 160
+    line_y = current_y
     line_length = 150
     line_x = (card_size[0] - line_length) // 2
     draw.line(
@@ -123,20 +130,19 @@ def generate_wedding_card(event, invitation=None, qr_image=None):
     event_title = f"The {event.title}"
     bbox = draw.textbbox((0, 0), event_title, font=title_font)
     x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
-    draw.text((x_pos, 180), event_title, fill=primary_text_color, font=title_font)
+    title_y = line_y + 20
+    draw.text((x_pos, title_y), event_title, fill=primary_text_color, font=title_font)
 
     # Couple's names (if available)
+    current_y = title_y + 50
     if hasattr(event, 'couple') and event.couple:
         couple_text = event.couple
         bbox = draw.textbbox((0, 0), couple_text, font=subtitle_font)
         x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
-        draw.text((x_pos, 230), couple_text, fill=accent_color, font=subtitle_font)
-        
-        # Adjust decorative elements position to accommodate couple names
-        decorative_y = 260
-    else:
-        # Original position when no couple names
-        decorative_y = 210
+        draw.text((x_pos, current_y), couple_text, fill=accent_color, font=subtitle_font)
+        current_y += 40
+    
+    decorative_y = current_y
 
     # Decorative ellipses around title/couple area
     draw.ellipse(
@@ -148,54 +154,114 @@ def generate_wedding_card(event, invitation=None, qr_image=None):
         fill=accent_color,
     )
 
-    # Date and time
-    date_str = event.date.strftime("%A, %B %d, %Y")
-    time_str = event.date.strftime("%I:%M %p")
+    # Multiple events or single event
+    events_y = decorative_y + 30
+    if events and len(events) > 1:
+        # Multiple events
+        for i, evt in enumerate(events):
+            # Event name/label
+            event_name = evt.get('name', f'Event {i + 1}')
+            bbox = draw.textbbox((0, 0), event_name, font=accent_font)
+            x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+            draw.text((x_pos, events_y), event_name, fill=accent_color, font=accent_font)
+            events_y += 20
+            
+            # Date and time
+            date_str = evt.get('date', 'TBD')
+            time_str = evt.get('time', 'TBD')
+            
+            bbox = draw.textbbox((0, 0), date_str, font=body_font)
+            x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+            draw.text((x_pos, events_y), date_str, fill=primary_text_color, font=body_font)
+            events_y += 20
+            
+            bbox = draw.textbbox((0, 0), time_str, font=accent_font)
+            x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+            draw.text((x_pos, events_y), time_str, fill=secondary_text_color, font=accent_font)
+            events_y += 20
+            
+            # Location
+            location = evt.get('location', 'TBD')
+            venue_label = "AT"
+            bbox = draw.textbbox((0, 0), venue_label, font=accent_font)
+            x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+            draw.text((x_pos, events_y), venue_label, fill=secondary_text_color, font=accent_font)
+            events_y += 15
+            
+            bbox = draw.textbbox((0, 0), location, font=body_font)
+            x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+            draw.text((x_pos, events_y), location, fill=primary_text_color, font=body_font)
+            events_y += 30
+    else:
+        # Single event (original behavior)
+        date_str = event.date.strftime("%A, %B %d, %Y")
+        time_str = event.date.strftime("%I:%M %p")
 
-    bbox = draw.textbbox((0, 0), date_str, font=body_font)
-    x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
-    draw.text((x_pos, 280), date_str, fill=primary_text_color, font=body_font)
+        bbox = draw.textbbox((0, 0), date_str, font=body_font)
+        x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+        draw.text((x_pos, events_y), date_str, fill=primary_text_color, font=body_font)
+        events_y += 25
 
-    bbox = draw.textbbox((0, 0), time_str, font=accent_font)
-    x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
-    draw.text((x_pos, 310), time_str, fill=accent_color, font=accent_font)
+        bbox = draw.textbbox((0, 0), time_str, font=accent_font)
+        x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+        draw.text((x_pos, events_y), time_str, fill=accent_color, font=accent_font)
+        events_y += 30
 
-    # Venue label "AT"
-    venue_label = "AT"
-    bbox = draw.textbbox((0, 0), venue_label, font=accent_font)
-    x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
-    draw.text((x_pos, 350), venue_label, fill=secondary_text_color, font=accent_font)
+        # Venue label "AT"
+        venue_label = "AT"
+        bbox = draw.textbbox((0, 0), venue_label, font=accent_font)
+        x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+        draw.text((x_pos, events_y), venue_label, fill=secondary_text_color, font=accent_font)
+        events_y += 15
 
-    # Venue name
-    venue_name = event.venue
-    bbox = draw.textbbox((0, 0), venue_name, font=body_font)
-    x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
-    draw.text((x_pos, 380), venue_name, fill=primary_text_color, font=body_font)
+        # Venue name
+        venue_name = event.venue
+        bbox = draw.textbbox((0, 0), venue_name, font=body_font)
+        x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+        draw.text((x_pos, events_y), venue_name, fill=primary_text_color, font=body_font)
+        events_y += 30
+
+    # Payment amount if provided
+    if payment_amount:
+        # Add some spacing
+        events_y += 10
+        
+        # Payment label
+        payment_label = "Registration Fee:"
+        bbox = draw.textbbox((0, 0), payment_label, font=accent_font)
+        x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+        draw.text((x_pos, events_y), payment_label, fill=secondary_text_color, font=accent_font)
+        events_y += 20
+        
+        # Payment amount
+        amount_text = f"${payment_amount}" if isinstance(payment_amount, (int, float)) else str(payment_amount)
+        bbox = draw.textbbox((0, 0), amount_text, font=body_font)
+        x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
+        draw.text((x_pos, events_y), amount_text, fill=accent_color, font=body_font)
+        events_y += 30
 
     # Bible scripture
     scripture_text = '"He who finds a wife finds what is good'
     scripture_reference = 'and receives favor from the LORD."'
     scripture_verse = "Proverbs 18:22"
     
-    # Scripture text with line wrapping
+    # Scripture text with line wrapping (dynamic positioning)
+    scripture_y = events_y + 10
     bbox = draw.textbbox((0, 0), scripture_text, font=accent_font)
     x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
-    draw.text((x_pos, 420), scripture_text, fill=secondary_text_color, font=accent_font)
+    draw.text((x_pos, scripture_y), scripture_text, fill=secondary_text_color, font=accent_font)
     
     bbox = draw.textbbox((0, 0), scripture_reference, font=accent_font)
     x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
-    draw.text((x_pos, 435), scripture_reference, fill=secondary_text_color, font=accent_font)
+    draw.text((x_pos, scripture_y + 15), scripture_reference, fill=secondary_text_color, font=accent_font)
     
     # Scripture reference in italics style
     bbox = draw.textbbox((0, 0), scripture_verse, font=small_font)
     x_pos = (card_size[0] - (bbox[2] - bbox[0])) // 2
-    draw.text((x_pos, 460), scripture_verse, fill=accent_color, font=small_font)
+    draw.text((x_pos, scripture_y + 40), scripture_verse, fill=accent_color, font=small_font)
 
-    # Adjust bottom decorations position based on QR code presence
-    if qr_image:
-        bottom_y = 490  # Move decorations lower to accommodate scripture
-    else:
-        bottom_y = 490  # Same position for consistency
+    # Adjust bottom decorations position dynamically
+    bottom_y = scripture_y + 70
 
     separator_length = 200
     separator_x = (card_size[0] - separator_length) // 2
@@ -305,47 +371,39 @@ def generate_wedding_card(event, invitation=None, qr_image=None):
             width=1,
         )
 
-    # QR Code placement - centered at bottom with better visibility
+    # QR Code placement - smaller size at bottom left
     if qr_image:
-        # Larger QR code for better scanning
-        qr_size = 160  # Increased from 120 to 160
+        # Smaller QR code
+        qr_size = 80  # Reduced from 160 to 80
         
-        # Center the QR code horizontally and place it near the bottom
-        qr_x = (card_size[0] - qr_size) // 2
-        qr_y = card_size[1] - qr_size - 80  # 80px from bottom
+        # Position at bottom left with margin
+        margin_from_edge = 50
+        qr_x = margin_from_edge
+        qr_y = card_size[1] - qr_size - margin_from_edge
         
         # Create a white background with subtle border for the QR code
-        padding = 12
+        padding = 8  # Reduced padding
         bg_x = qr_x - padding
         bg_y = qr_y - padding
         bg_size = qr_size + (padding * 2)
         
-        # Draw white background with rounded corners effect
+        # Draw white background
         draw.rectangle(
             [bg_x, bg_y, bg_x + bg_size, bg_y + bg_size],
             fill=(255, 255, 255),
             outline=border_color,
-            width=2
-        )
-        
-        # Add subtle shadow effect
-        shadow_offset = 3
-        draw.rectangle(
-            [bg_x + shadow_offset, bg_y + shadow_offset, 
-             bg_x + bg_size + shadow_offset, bg_y + bg_size + shadow_offset],
-            fill=(0, 0, 0, 20),  # Semi-transparent black
-            outline=None
+            width=1
         )
         
         # Resize and paste the QR code
         qr_resized = qr_image.resize((qr_size, qr_size), Image.Resampling.LANCZOS)
         image.paste(qr_resized, (qr_x, qr_y))
         
-        # Add "Scan for Details" text below QR code
-        scan_text = "Scan for Verification"
+        # Add "Scan" text below QR code (smaller text)
+        scan_text = "Scan"
         bbox = draw.textbbox((0, 0), scan_text, font=small_font)
-        text_x = (card_size[0] - (bbox[2] - bbox[0])) // 2
-        text_y = qr_y + qr_size + 20
+        text_x = qr_x + (qr_size - (bbox[2] - bbox[0])) // 2  # Center under QR code
+        text_y = qr_y + qr_size + 5
         draw.text(
             (text_x, text_y),
             scan_text,
